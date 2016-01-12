@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+  <title>Cognitive Task</title>
+  <link href="./css/style.css" rel="stylesheet" type="text/css" />
+</head>
+
+<body>
+
+<h1 style="text-align:left" id="header">Welcome!</h1>
+
+
+<!-- ####################### Splash page ####################### -->
+<div class="splash">
+	<!-- Text box for the splash page -->
+		<div class="splash" style="text-align:left; border:2px solid; padding:10px;  width:600px">
+		<p>Thanks for accepting the HIT. This task is a short psychological study investigating how people learn and make decisions. It involves the following steps:</p>
+		<ol>
+			<li> We ask you for basic demographic information (not connected to your Amazon ID)</li> 
+			<li> The study then explains the game. You will need to pass a short test to check that you understand how the study works.</li> 
+			<li> Next comes the experiment itself.</li>
+			<li> At the end, we'll give you the completion code you need to get paid for the HIT.</li>
+		</ol>
+		<p>Total time taken should be about 10 minutes. Please <u>don't</u> use the "back" button on your browser or close the window until you reach the end and receive your completion code. This is very likely to break the experiment and may make it difficult for you to get paid. However, if something does go wrong, please contact us! When you're ready to begin, click on the "start" button below.</p></div>
+	<br><br>
+	
+	<!-- Next button for the splash page -->		
+	<input type="button" id="splashButton" class="splash" value="Get Started!" 
+		onclick="splashButtonClick()">
+</div>
+
+<!-- ####################### Demographics ####################### -->
+<div class="demographics" style="display:none">
+	<div class="demographics" style="text-align:left; border:2px solid; padding:10px;  width:600px">
+		<!-- Explanatory text -->
+		<p>We need this information for our records, but it is kept completely separate from information about your Amazon ID. As long as you finish the experiment you will get paid no matter what you put here, so please be honest.</p><br>
+
+		<!-- Gender -->
+		<label for="gender"><b>Gender: &nbsp;</b></label>
+		<input type="radio" name="gender" value="male" /> Male &nbsp; 
+		<input type="radio" name="gender" value="female" /> Female &nbsp;
+		<input type="radio" name="gender" value="other" /> Other<br /><br />
+
+		<!-- Age -->
+		<label for="age"><b>Age: &nbsp;</b></label><input id="age" name="age" /><br /><br />
+
+		<!-- Language -->
+		<label for="language"><b>Native Language(s): &nbsp;</b></label><input id="language" name="language" /><br /><br />
+
+		<!-- Country -->
+		<label for="country"><b>Country you live in: &nbsp;</b></label>  
+		<select name="country" id="country" class='drop-menu'>
+			<option selected="selected">Please select a country from the list</option><option>Afghanistan</option><option>&Aring;land Islands</option><option>Albania</option><option>Algeria</option><option>American Samoa</option><option>Andorra</option><option>Angola</option><option>Anguilla</option><option>Antarctica</option><option>Antigua and Barbuda</option><option>Argentina</option><option>Armenia</option><option>Aruba</option><option>Australia</option><option>Austria</option><option>Azerbaijan</option><option>Bahamas</option><option>Bahrain</option><option>Bangladesh</option><option>Barbados</option><option>Belarus</option><option>Belgium</option><option>Belize</option><option>Benin</option><option>Bermuda</option><option>Bhutan</option><option>Bolivia</option><option>Bosnia and Herzegovina</option><option>Botswana</option><option>Bouvet Island</option><option>Brazil</option><option>British Indian Ocean territory</option><option>Brunei Darussalam</option><option>Bulgaria</option><option>Burkina Faso</option><option>Burundi</option><option>Cambodia</option><option>Cameroon</option><option>Canada</option><option>Cape Verde</option><option>Cayman Islands</option><option>Central African Republic</option><option>Chad</option><option>Chile</option><option>China</option><option>Christmas Island</option><option>Cocos (Keeling) Islands</option><option>Colombia</option><option>Comoros</option><option>Congo</option><option>Congo, Democratic Republic</option><option>Cook Islands</option><option>Costa Rica</option><option>C&ocirc;te d'Ivoire (Ivory Coast)</option><option>Croatia (Hrvatska)</option><option>Cuba</option><option>Cyprus</option><option>Czech Republic</option><option>Denmark</option><option>Djibouti</option><option>Dominica</option><option>Dominican Republic</option><option>East Timor</option><option>Ecuador</option><option>Egypt</option><option>El Salvador</option><option>Equatorial Guinea</option><option>Eritrea</option><option>Estonia</option><option>Ethiopia</option><option>Falkland Islands</option><option>Faroe Islands</option><option>Fiji</option><option>Finland</option><option >France</option><option>French Guiana</option><option>French Polynesia</option><option>French Southern Territories</option><option>Gabon</option><option>Gambia</option><option>Georgia</option><option >Germany</option><option>Ghana</option><option>Gibraltar</option><option>Greece</option><option>Greenland</option><option>Grenada</option><option>Guadeloupe</option><option>Guam</option><option>Guatemala</option><option>Guinea</option><option>Guinea-Bissau</option><option>Guyana</option><option>Haiti</option><option>Heard and McDonald Islands</option><option>Honduras</option><option>Hong Kong</option><option>Hungary</option><option>Iceland</option><option>India</option><option>Indonesia</option><option>Iran</option><option>Iraq</option><option>Ireland</option><option>Israel</option><option>Italy</option><option>Jamaica</option><option>Japan</option><option>Jordan</option><option>Kazakhstan</option><option>Kenya</option><option>Kiribati</option><option>Korea (north)</option><option>Korea (south)</option><option>Kuwait</option><option>Kyrgyzstan</option><option>Lao People's Democratic Republic</option><option>Latvia</option><option>Lebanon</option><option>Lesotho</option><option>Liberia</option><option>Libyan Arab Jamahiriya</option><option>Liechtenstein</option><option>Lithuania</option><option>Luxembourg</option><option>Macao</option><option>Macedonia, Former Yugoslav Republic Of</option><option>Madagascar</option><option>Malawi</option><option>Malaysia</option><option>Maldives</option><option>Mali</option><option>Malta</option><option>Marshall Islands</option><option>Martinique</option><option>Mauritania</option><option>Mauritius</option><option>Mayotte</option><option>Mexico</option><option>Micronesia</option><option>Moldova</option><option>Monaco</option><option>Mongolia</option><option>Montenegro</option><option>Montserrat</option><option>Morocco</option><option>Mozambique</option><option>Myanmar</option><option>Namibia</option><option>Nauru</option><option>Nepal</option><option>Netherlands</option><option>Netherlands Antilles</option><option>New Caledonia</option><option >New Zealand</option><option>Nicaragua</option><option>Niger</option><option>Nigeria</option><option>Niue</option><option>Norfolk Island</option><option>Northern Mariana Islands</option><option>Norway</option><option>Oman</option><option>Pakistan</option><option>Palau</option><option>Palestinian Territories</option><option>Panama</option><option>Papua New Guinea</option><option>Paraguay</option><option>Peru</option><option>Philippines</option><option>Pitcairn</option><option>Poland</option><option>Portugal</option><option>Puerto Rico</option><option>Qatar</option><option>R&eacute;union</option><option>Romania</option><option>Russian Federation</option><option>Rwanda</option><option>Saint Helena</option><option>Saint Kitts and Nevis</option><option>Saint Lucia</option><option>Saint Pierre and Miquelon</option><option>Saint Vincent and the Grenadines</option><option>Samoa</option><option>San Marino</option><option>Sao Tome and Principe</option><option>Saudi Arabia</option><option>Senegal</option><option>Serbia</option><option>Seychelles</option><option>Sierra Leone</option><option>Singapore</option><option>Slovakia</option><option>Slovenia</option><option>Solomon Islands</option><option>Somalia</option><option>South Africa</option><option>South Georgia and the South Sandwich Islands</option><option>Spain</option><option>Sri Lanka</option><option>Sudan</option><option>Suriname</option><option>Svalbard and Jan Mayen Islands</option><option>Swaziland</option><option>Sweden</option><option>Switzerland</option><option>Syria</option><option>Taiwan</option><option>Tajikistan</option><option>Tanzania</option><option>Thailand</option><option>Togo</option><option>Tokelau</option><option>Tonga</option><option>Trinidad and Tobago</option><option>Tunisia</option><option>Turkey</option><option>Turkmenistan</option><option>Turks and Caicos Islands</option><option>Tuvalu</option><option>Uganda</option><option>Ukraine</option><option>United Arab Emirates</option><option >United Kingdom</option><option>United States of America</option><option>Uruguay</option><option>Uzbekistan</option><option>Vanuatu</option><option>Vatican City</option><option>Venezuela</option><option>Vietnam</option><option>Virgin Islands (British)</option><option>Virgin Islands (US)</option><option>Wallis and Futuna Islands</option><option>Western Sahara</option><option>Yemen</option><option>Zaire</option><option>Zambia</option><option>Zimbabwe</option>
+		</select>
+
+		<br>
+	</div>
+	<br>
+
+	<!-- Demographics  button -->
+	<input type="button" class="demographics" id="demographicsButton" value="Next >" 
+	onclick="demographicsButtonClick()">
+</div>
+
+<div class="demographicFail" style="display:none">
+	<div class="checkFail" style="text-align:left; border:2px solid; padding:10px;  width:600px">
+		<p>Sorry, but we need a response to each of the items on this page. Please try again.</p>
+	</div>
+	<br><br>
+
+	<!-- Next button for the splash page -->		
+	<input type="button" id="demographicFailButton" class="demographicFail" value="< Back to the Demographic Questions" 
+		onclick="demoFailButtonClick()">
+</div>
+
+
+<!-- ####################### Instructions ####################### -->
+
+<!-- One div to cover the whole instruction set -->
+<div class="instruction" style="display:none">
+
+	<!-- Instruction 0 (initially hidden only by the big-div)-->
+	<div class="instruction0">
+	<div id="instruction0inner" class="innerbox" style="text-align:left; border:2px solid; padding:10px;  width:600px">
+		<p>This is an experiment looking at how people make choices in an uncertain world. In particular, we're interested in how people choose between different options when they are uncertain about what those options mean.</p> 
+
+		<p>Suppose you are in a new city for a few weeks, and you want to find a nice restaurant to eat in. There are a lot of different restaurants that you could go to, and you don't know much about any of them. In order to find out which is best, you'll have to try a lot of different restaurants. But there's a dilemma here: every time you try a new restaurant, you don't know whether it will be better or worse than the ones you have tried before. If you want to have as many nice meals as you can, you need to decide how often to explore new restaurants and how often to go back to restaurants you've been to before.</p> 
+
+		<p>Choosing between different restaurants is a complex decision: our experiment is much simpler than that. It takes the form of a simple "guessing game", which we'll now describe.</p>
+	</div><br></div>
+
+
+
+	<!-- Instruction 1 (initially hidden by the big div and also itself hidden)-->
+	<div class="instruction1" style="display:none"> <a name="instruct1"></a>
+	<div id="instruction1inner" class="innerbox" style="text-align:left; border:2px solid; padding:10px;  width:600px">
+		The main game screen looks like this.
+		<br><br><img src="./img/options.png" height=200px><br><br>
+		Each of the circles is an option that you can select using the arrow keys on your keyboard. When you select an option, its outline will turn blue, and it will pay you a number of points between 0 and 100:
+		<br><br><img src="./img/choice.png" height=200px><br><br>
+		Different options will pay out different amounts of points, <b>and this will change over time.</b> That is, the option which gives you the most points now might not be the one that gives you the most points in a minute from now.
+	</div><br></div>
+	
+
+	<!-- Instruction 2 (initially hidden by the big div and also itself hidden)-->
+	<div class="instruction2" style="display:none"> <a name="instruct2"></a>
+	<div id="instruction2inner" class="innerbox" style="text-align:left; border:2px solid; padding:10px;  width:600px">
+		<p>Each game lasts for 30 "choices" (button presses), and your goal is to get as many points as possible in that time. The number of points you get depends very strongly on which options you choose.</p>
+		<p>You'll be asked to play 3 games. Every game has a new set of options, meaning that payouts will change between games. In other words, if one particular option was best at the end of the last game, that doesn't mean it will be the best at the start of the new game. In order to help you learn to play the game effectively, at the end of each game you'll get feedback about how you did. We'll tell you how many points you won, and how this compares to the maximum number of points available.</p> 
+	</div><br></div>
+
+	
+	<!-- Instruction button (initially hidden only by the big div) -->
+	<div class="instruction">
+		<input type="button" id="instructionButton" value="Read More >" onclick="instructionButtonClick()">
+	</div>
+	
+
+</div>
+
+<!-- ####################### Instruction Checks ####################### -->
+
+<div class="check" style="display:none">
+	<div style="text-align:left; border:2px solid; padding:10px;  width:600px">
+		
+		<!-- Question 0 -->
+		<label for="question0">How many choices will you be asked to make in each game?</label><br>
+		<input type="radio" name="question0" class="checkRadio" value="incorrect" />5<br />
+		<input type="radio" name="question0" class="checkRadio" value="correct" />30<br />
+		<input type="radio" name="question0" class="checkRadio" value="incorrect" />50<br /><br />
+
+		<!-- Question 1 -->
+		<label for="question1">What is the range of points that the options can pay out?</label><br>
+		<input type="radio" name="question1" class="checkRadio" value="incorrect" />Between -100 and 100 points<br />
+		<input type="radio" name="question1" class="checkRadio" value="incorrect" />Between 0 and 50 points<br />
+		<input type="radio" name="question1" class="checkRadio" value="correct" />Between 0 and 100 points<br />
+		<br>
+
+		<!-- Question 2 -->
+		<label for="question2">Which is true regarding the payouts of different options over time?</label><br>
+		<input type="radio" name="question2" class="checkRadio" value="incorrect" />Option payouts change within each game, but not between different games.<br />
+		<input type="radio" name="question2" class="checkRadio" value="incorrect" />Option payouts change between different games, but not within each game.<br />
+		<input type="radio" name="question2" class="checkRadio" value="correct" />Option payouts change both within each game and between different games.<br />
+		<br>
+
+		<!-- Question 3 -->
+		<label for="question3">How many games will you play?</label><br>
+		<input type="radio" name="question3" class="checkRadio" value="incorrect" />1 game<br />
+		<input type="radio" name="question3" class="checkRadio" value="correct" />3 games<br />
+		<input type="radio" name="question3" class="checkRadio" value="incorrect" />It depends on how many points I score<br />
+	
+	</div>
+	<br><br>
+
+	<!-- Next instruction button -->
+	<input type="button" id="checkButton" value="Submit Answers" onclick="checkButtonClick()">
+</div>
+
+<!-- ####################### Response to Instruction Check ####################### -->
+
+<div class="checkSuccess" style="display:none">
+	<div class="checkSuccess" style="text-align:left; border:2px solid; padding:10px;  width:600px">
+		<p>Well done! Click on the button below when you're ready to start the experiment</p>
+	</div>
+	<br><br>
+
+	<!-- Next button for the splash page -->		
+	<input type="button" id="checkSuccessButton" class="checkSuccess" value="Start Experiment!" 
+		onclick="startButtonClick()">
+</div>	
+
+<div class="checkFail" style="display:none">
+	<div class="checkFail" style="text-align:left; border:2px solid; padding:10px;  width:600px">
+		<p>Sorry, at least one of your answers was incorrect. Please take another look at the instructions and try again.</p>
+	</div>
+	<br><br>
+
+	<!-- Next button for the splash page -->		
+	<input type="button" id="checkFailButton" class="checkFail" value="< Back to the Instructions" 
+		onclick="checkFailButtonClick()">
+</div>
+
+	
+	<!-- ####################### Wrap up! ####################### -->
+
+	<div class="wrapup" style="display:none">
+		<div class="wrapup" style="text-align:left; border:2px solid; padding:10px;  width:600px">
+			<p>Thanks for participating in the experiment!
+				<br><br>
+				Your completion code is <span id="turkcode" style="font-weight:bold;font-size:125%">0192</span>. To receive payment for the HIT, return to the Amazon Mechanical Turk page and enter this code. Please contact us if something goes wrong and we'll fix it as quickly as possible.
+		</div>
+	</div>
+
+
+<canvas id = "canvasHandle" width = "600" height = "400" style = "display:block; margin: 0 auto;">
+</canvas>
+
+<!-- Script for jquery -->
+<script src="./js/jquery.js" type="text/javascript">
+</script>
+
+<!-- Script for random number generation -->
+<script src="./js/randgen.js" type="text/javascript">
+</script>
+
+<!-- Script to define the experiment and run it -->
+<script src="./js/experiment.js" type="text/javascript">
+</script>
+
+
+</body>
+</html>

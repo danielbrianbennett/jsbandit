@@ -1,0 +1,2 @@
+cd "Google Drive/Works in Progress/JSBANDIT/Bandit/"
+appcfg.py --oauth2 download_data --config_file=bulkloader.yaml --filename=data.csv --kind=DataObject --url=http://bandit-992.appspot.com/_ah/remote_api
