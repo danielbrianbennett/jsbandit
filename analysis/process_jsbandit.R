@@ -4,35 +4,52 @@ sorted.data["changeLag"] <- NA
 sorted.data["filledChosen"] <- NA
 sorted.data["switchChoice"] <- NA
 
-lag.counter <- 1
+nBlocks <- 3
+nTrials <- 30
+
+IDs <- unique(sorted.data$ID)
+weirdParticipants = c()
+
+for ( p in 1:length(IDs) ){
+  for ( block in 1:nBlocks ) {
+    
+    # get participant/block data
+    temp.data <- sorted.data[sorted.data$ID == IDs[p] & sorted.data$block == block,]
+    
+    # check for weird data
+    if (length(temp.data$trial) != nTrials) {
+      weirdParticipants <- c(weirdParticipants, unique(temp.data$ID))
+    }
+    
+    # assign changeLag
+    changeNumber <- match(unique(temp.data$whichFilled),temp.data$whichFilled)[2]
+    temp.data[,"changeLag"] <- temp.data$trial - changeNumber
+    temp.data[temp.data$changeLag >= 0,]$changeLag = temp.data[temp.data$changeLag >= 0,]$changeLag + 1
+    
+    # work out whether filled option was chosen
+    whichFilled <- unique(temp.data$whichFilled)[2]
+    test <- temp.data$choice == whichFilled
+    if (any(test)){
+      temp.data[test,]$filledChosen <- 1
+    }
+    if (!all(test)){
+      temp.data[!test,]$filledChosen <- 0
+    }
+    
+    # reassign to sorted.data
+    sorted.data[sorted.data$ID == IDs[p] & sorted.data$block == block,] <- temp.data
+  }
+}
+
+# define as either switch or stay
 for (i in 1:nrow(sorted.data)) {
-  
   if (sorted.data[i,]$trial > 1 && sorted.data[i,]$choice == sorted.data[i-1,]$choice){
     sorted.data[i,]$switchChoice <- 0
   } else if (sorted.data[i,]$trial > 1 && sorted.data[i,]$choice != sorted.data[i-1,]$choice){
     sorted.data[i,]$switchChoice <- 1
   }
-  
-  if (sorted.data[i,]$whichFilled == "none") {
-    lag.counter <- 1
-    next
-  }
-  sorted.data[i,]$changeLag <- lag.counter
-  lag.counter <- lag.counter + 1
 }
 
-# sorted.data <- sorted.data[sorted.data$ID != 48241651 & sorted.data$ID != 64207138,]
-
-filled <-  sorted.data$whichFilled != "none" & sorted.data$choice != sorted.data$whichFilled
-sorted.data[filled,]$filledChosen <- 0
-filled.chosen <-  sorted.data$whichFilled != "none" & sorted.data$choice == sorted.data$whichFilled
-sorted.data[filled.chosen,]$filledChosen <- 1
-
-switch.filled.data <- sorted.data[sorted.data$switchChoice == 1 & sorted.data$whichFilled != "none" & sorted.data$changeLag <= 2,]
-
-
-plot.choice.data <- data.frame(lag = 1:19, choiceProp = tapply(sorted.data$filledChosen,sorted.data$changeLag,mean))
-p <- ggplot(plot.choice.data, aes(x = lag, y = choiceProp, group = 1)) + geom_line() + ylim(0, 0.5) + xlab("Trial Number After Change") + ylab("Proportion of Choices of Changed Option")
-p + theme(axis.title = element_text(size=20), axis.text = element_text(size = 16))
-
-
+# work out which are the weird participants and exclude them
+weirdParticipants <- unique(weirdParticipants)
+sorted.data <- subset(sorted.data, !(sorted.data$ID %in% weirdParticipants))

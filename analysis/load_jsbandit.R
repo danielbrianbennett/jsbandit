@@ -1,17 +1,15 @@
-## ungainly script to import to formatted csv from the gae data dump. requires data.csv to be in the same directory as parser.py.
-
 ## Set version number (make sure we only get the version of interest)
 version.number <- 2.2
 
 ## Set directory parameters
-base.directory <- "C:\\Users\\dbennett1\\Google Drive\\Works in Progress\\JSBANDIT\\Bandit\\data"
+base.directory <- "C:\\Users\\dbennett1\\Google Drive\\Works in Progress\\JSBANDIT\\Bandit\\analysis\\"
 directory.separator <- "\\"
-file.name <- "data.csv"
+file.name <- "datadump_16Jan2016_1254PM.csv"
 
 ## Load datafile
 input.file <- paste(base.directory, file.name, sep = directory.separator)
-setwd("C:\\Users\\dbennett1\\Google Drive\\Works in Progress\\JSBANDIT\\Bandit\\analysis")
-input.file <- "data.csv"
+setwd(base.directory)
+input.file <- "datadump_16Jan2016_1254PM.csv"
 
 # this is the location you want the python parser to write the parsed CSV file
 output.file <- "jsbandit.csv"
