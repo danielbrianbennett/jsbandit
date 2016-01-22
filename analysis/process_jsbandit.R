@@ -8,7 +8,7 @@ nBlocks <- 3
 nTrials <- 30
 
 IDs <- unique(sorted.data$ID)
-weirdParticipants = c()
+weirdParticipants <- c()
 
 for ( p in 1:length(IDs) ){
   for ( block in 1:nBlocks ) {
@@ -52,4 +52,5 @@ for (i in 1:nrow(sorted.data)) {
 
 # work out which are the weird participants and exclude them
 weirdParticipants <- unique(weirdParticipants)
+weird.data <- subset(sorted.data, (sorted.data$ID %in% weirdParticipants))
 sorted.data <- subset(sorted.data, !(sorted.data$ID %in% weirdParticipants))
