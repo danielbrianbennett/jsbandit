@@ -1,4 +1,4 @@
-# retrieve only data within 7 trials either side of a change
+# retrieve only data from 5 trials before to 7 trials after a change
 proximal.data <- subset(sorted.data, sorted.data$changeLag < 8 & sorted.data$changeLag > -6)
 
 # aggregate choice proportions by lag number across participants
