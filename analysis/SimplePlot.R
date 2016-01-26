@@ -1,3 +1,11 @@
+# set file name and directory
+base.directory <- "/Users/Daniel/Google Drive/Works in Progress/JSBANDIT/Bandit/data/Bandit project shared data"
+directory.separator <- "/"
+file.name <- "banditData_v2point2.RData"
+
+# load data
+load(paste(base.directory, file.name, sep = directory.separator))
+
 # retrieve only data from 5 trials before to 7 trials after a change
 proximal.data <- subset(sorted.data, sorted.data$changeLag < 8 & sorted.data$changeLag > -6)
 
