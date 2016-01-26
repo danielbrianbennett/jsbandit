@@ -8,7 +8,7 @@ load(paste(base.directory, file.name, sep = directory.separator))
 
 # calculate variability of choices across participants and plot in a histogram
 switch.prob <- aggregate(sorted.data$switchChoice, by = list(sorted.data$ID), FUN = "mean", na.rm = TRUE)
-hist(switch.prob$x, breaks = 40, xlim = c(0,1))
+hist(switch.prob$x, breaks = 40, xlim = c(0,1), xlab = "Choice Stochasticity Index", ylab = "", main= "", col = "gray")
 
 # divide choices into top, middle, and bottom tertiles
 tertile.boundaries <- quantile(switch.prob$x, probs = c(1/3, 2/3))

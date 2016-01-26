@@ -23,7 +23,11 @@ for (i in 1:nrow(eligible.data)){
 # use logistic regression to estimate probability of staying with filled option as a function of RCS
 dat <- data.frame(rcs,next.trial) #put the two variables into a dataframe
 rcs.fit <- glm(next.trial ~ rcs, data = dat, family = binomial(link = "logit"))
+summary(rcs.fit)
 
 # plot the curve and fit
 library(ggplot2)
-ggplot(dat, aes(x = rcs, y = next.trial)) + geom_point() + stat_smooth(method = "glm", family = "binomial", se=FALSE)
+ggplot(dat, aes(x = rcs, y = next.trial)) + geom_point() + stat_smooth(method = "glm", family = "binomial", se=FALSE) + xlab("Reward Change Score") + ylab("Oddball Choice Probability") +
+  theme(axis.text = element_text(size = 14), plot.title = element_text(size = 20), axis.title = element_text(size = 16, face = "bold"))
+  
+
