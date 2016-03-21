@@ -6,17 +6,17 @@ library('stats4')
 load("C:/Users/dbennett1/Google Drive/Works in Progress/JSBANDIT/Bandit/data/v2.2/banditData_v2point2.RData")
 
 # get input parameters
-nBlocks <- 3
-nBandits <- 4
-nTrials <- 30
 varianceGamma_start <- 4
 varianceEpsilon_start <- 4
 participantID <- 10868001
 
 source("C:/Users/dbennett1/Documents/GitHub/jsbandit/analysis/KalmanPMU.R")
 
+participantData <- subset(sorted.data,ID == participantID)
+
+
 LL <- function(gamma,epsilon) {
-  output <- KalmanPMU(sorted.data,participantID,gamma,epsilon)
+  output <- KalmanPMU(particpantData,gamma,epsilon)
   return(output$negativeLL)
 }
 
