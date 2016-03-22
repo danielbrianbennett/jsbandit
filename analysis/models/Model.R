@@ -2,7 +2,8 @@
 library('stats4')
 
 # load data
-load("C:/Users/dbennett1/Google Drive/Works in Progress/JSBANDIT/Bandit/data/v2.2/banditData_v2point2.RData")
+#load("C:/Users/dbennett1/Google Drive/Works in Progress/JSBANDIT/Bandit/data/v2.2/banditData_v2point2.RData")
+load("/Users/Daniel/Google Drive/Works in Progress/JSBANDIT/Bandit/data/v2.2/banditData_v2point2.RData")
 
 # constants
 nBlocks <- length(unique(sorted.data$block))
@@ -25,6 +26,20 @@ choices[choices == "bottom"] <- 3
 choices[choices == "left"] <- 4
 choices <- matrix(as.numeric(choices),nBlocks,nTrials)
 points <- matrix(participantData$pointsWon,nBlocks,nTrials,byrow = T)
+changepoint <- vector(mode = "integer",length = nBlocks)
+changeID <- vector(mode = "character",length = nBlocks)
+
+for (i in 1:nBlocks){
+  blockData <- subset(participantData,block == i)
+  changepoint[i] <- match(unique(blockData$whichFilled),blockData$whichFilled)[2]
+  changeID[i] <- blockData[changepoint[i],]$whichFilled
+}
+
+changeID[changeID == "top"] <- 1
+changeID[changeID == "right"] <- 2
+changeID[changeID == "bottom"] <- 3
+changeID[changeID == "left"] <- 4
+changeID <- as.numeric(changeID)
 
 LL <- function(zeta,epsilon) {
   output <- KalmanPMU(choices,points,zeta,epsilon)
