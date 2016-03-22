@@ -4,8 +4,19 @@ A[,,2] <- matrix(c(-1,0,0,1,1,1,0,-1,0,0,0,-1),nrow = 3, ncol = 4)
 A[,,3] <- matrix(c(-1,0,0,0,-1,0,1,1,1,0,0,-1),nrow = 3, ncol = 4)
 A[,,4] <- matrix(c(-1,0,0,0,-1,0,0,0,-1,1,1,1),nrow = 3, ncol = 4)
 
-KalmanPMU <- function(choices,points,zeta,epsilon){
-    
+ChangeBonus <- function(nTrials, nBlocks, changeBonus, trialDecay, blockDecay){  
+  bonus <- matrix(data = 0, nrow = nBlocks, ncol = nTrials)  
+  for (i in 1:nBlocks){
+    bonus[i,] <- changeBonus * ( i ^ -blockDecay ) * ( c(1:nTrials) ^ -trialDecay ) 
+  }  
+  return(bonus)
+}
+
+
+KalmanPMU <- function(choices,points,zeta,epsilon,B,k,j){
+  
+  bonus <- ChangeBonus(nTrials,nBlocks,B,k,j)
+  
   # create containers
   banditMean <- array(data = 0, dim = c(nBandits,nTrials+1,nBlocks))
   banditVariance <- array(data = 1000, dim = c(nBandits,nTrials+1,nBlocks))
@@ -24,6 +35,10 @@ KalmanPMU <- function(choices,points,zeta,epsilon){
         
         kalmanGain[iBandit,iTrial-1,iBlock] <- (banditVariance[iBandit,iTrial-1,iBlock] + (zeta ^ 2)) / (banditVariance[iBandit,iTrial-1,iBlock] + (zeta ^ 2) + (epsilon ^ 2))
         banditMean[iBandit,iTrial,iBlock] <- banditMean[iBandit,iTrial-1,iBlock]  + deltaFunction[iBandit] * kalmanGain[iBandit,iTrial-1,iBlock] * (points[iBlock,iTrial-1] - banditMean[iBandit,iTrial-1,iBlock])
+        if ((iTrial-1) >= changepoint[iBlock] & iBandit == changeID[iBlock]){
+          banditMean[iBandit,iTrial,iBlock] <- banditMean[iBandit,iTrial,iBlock] + bonus[iBlock,iTrial-1]
+        }
+         
         banditVariance[iBandit,iTrial,iBlock] <- (1 - (deltaFunction[iBandit] * kalmanGain[iBandit,iTrial-1,iBlock])) * (banditVariance[iBandit,iTrial-1,iBlock] + (zeta ^ 2))
         M = A[,,iBandit] %*% banditMean[,iTrial-1,iBlock]
         H = A[,,iBandit] %*% diag(banditVariance[,iTrial-1,iBlock] + (epsilon^2)) %*% t(A[,,iBandit])

@@ -16,20 +16,20 @@ participantID <- 10868001
 source("/Users/Daniel/Git Repositories//jsbandit/analysis/models/ExtractParticipantData.R")
 source("/Users/Daniel/Git Repositories//jsbandit/analysis/models/KalmanPMU.R")
 
-LL <- function(zeta,epsilon) {
+LL <- function(zeta,epsilon,B,j,k) {
   output <- KalmanPMU(choices,points,zeta,epsilon)
   return(output$negativeLL)
 }
 
-t1 <- Sys.time()
 mle.fit <- mle(LL, 
-               start = list(zeta = varianceZeta_start),
-               fixed = list(epsilon = 4))
-t2 <- Sys.time()
+               start = list(zeta = varianceZeta_start, epsilon = varianceEpsilon_start),
+)
 
+t1 <- Sys.time()
+output <- KalmanPMU(choices,points,mle.fit@coef[1],4)
+t2 <- Sys.time()
 difftime(t2,t1)
 
-output <- KalmanPMU(choices,points,mle.fit@coef[1],4)
 # plot bandit means
 for (i in 1:nBlocks) {
   matplot(t(output$banditMean[,,i]), type = "b")
