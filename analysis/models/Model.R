@@ -29,8 +29,8 @@ t2 <- Sys.time()
 
 difftime(t2,t1)
 
-output <- KalmanPMU(sorted.data,participantID,mle.fit@coef[1],4)
+output <- KalmanPMU(choices,points,mle.fit@coef[1],4)
 # plot bandit means
 for (i in 1:nBlocks) {
-  matplot(t(output$banditMeans[,,i]), type = "b")
+  matplot(t(output$banditMean[,,i]), type = "b")
 }
