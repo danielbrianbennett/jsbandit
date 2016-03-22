@@ -4,22 +4,14 @@ A[,,2] <- matrix(c(-1,0,0,1,1,1,0,-1,0,0,0,-1),nrow = 3, ncol = 4)
 A[,,3] <- matrix(c(-1,0,0,0,-1,0,1,1,1,0,0,-1),nrow = 3, ncol = 4)
 A[,,4] <- matrix(c(-1,0,0,0,-1,0,0,0,-1,1,1,1),nrow = 3, ncol = 4)
 
-library('mvtnorm')
-
 KalmanPMU <- function(choices,points,zeta,epsilon){
-
-  # hard code number of bandits
-  nBandits <- 4
-  
-  # extract n blocks and n trials
-  nBlocks <- dim(choices)[1]
-  nTrials <- dim(choices)[2]
     
   # create containers
   banditMean <- array(data = 0, dim = c(nBandits,nTrials+1,nBlocks))
   banditVariance <- array(data = 1000, dim = c(nBandits,nTrials+1,nBlocks))
   kalmanGain <- array(dim = c(nBandits,nTrials,nBlocks))
-  choiceProb <- array(dim = c(nBandits,nTrials,nBlocks))
+  allChoiceProb <- array(dim = c(nBandits,nTrials,nBlocks))
+  choiceProb <- matrix(0,nrow = nBlocks, ncol = nTrials)
   
   for (iBlock in 1:nBlocks){
     
@@ -35,8 +27,25 @@ KalmanPMU <- function(choices,points,zeta,epsilon){
         banditVariance[iBandit,iTrial,iBlock] <- (1 - (deltaFunction[iBandit] * kalmanGain[iBandit,iTrial-1,iBlock])) * (banditVariance[iBandit,iTrial-1,iBlock] + (zeta ^ 2))
         M = A[,,iBandit] %*% banditMean[,iTrial-1,iBlock]
         H = A[,,iBandit] %*% diag(banditVariance[,iTrial-1,iBlock] + (epsilon^2)) %*% t(A[,,iBandit])
-        choiceProb[iBandit,iTrial-1,iBlock] <- pmvnorm(lower= 0,mean = as.vector(M), sigma = H)[1]
+        allChoiceProb[iBandit,iTrial-1,iBlock] <- pmvnorm(lower= 0,mean = as.vector(M), sigma = H)[1]
+        choiceProb[iBlock,iTrial-1] <- allChoiceProb[choices[iBlock,iTrial-1],iTrial-1,iBlock]
       }
   }
 }
+  
+  temp <- log(choiceProb)
+  temp[temp == -Inf] <- -100
+  negativeLL <- -sum(temp)
+  
+  output <- list("banditMean" = banditMean,
+                 "banditVariance" = banditVariance,
+                 "kalmanGain" = kalmanGain,
+                 "choices" = choices,
+                 "points" = points,
+                 "changepoint" = changepoint,
+                 "changeID" = changeID,
+                 "allChoiceProb" = allChoiceProb,
+                 "choiceProb" = choiceProb,
+                 "negativeLL" = negativeLL)
+
 }
