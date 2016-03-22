@@ -15,6 +15,8 @@ ChangeBonus <- function(nTrials, nBlocks, changeBonus, trialDecay, blockDecay){
 
 KalmanPMU <- function(choices,points,zeta,epsilon,B,k,j){
   
+  if (zeta >= 0 & epsilon >= 0){
+  
   bonus <- ChangeBonus(nTrials,nBlocks,B,k,j)
   
   # create containers
@@ -36,7 +38,7 @@ KalmanPMU <- function(choices,points,zeta,epsilon,B,k,j){
         kalmanGain[iBandit,iTrial-1,iBlock] <- (banditVariance[iBandit,iTrial-1,iBlock] + (zeta ^ 2)) / (banditVariance[iBandit,iTrial-1,iBlock] + (zeta ^ 2) + (epsilon ^ 2))
         banditMean[iBandit,iTrial,iBlock] <- banditMean[iBandit,iTrial-1,iBlock]  + deltaFunction[iBandit] * kalmanGain[iBandit,iTrial-1,iBlock] * (points[iBlock,iTrial-1] - banditMean[iBandit,iTrial-1,iBlock])
         if ((iTrial-1) >= changepoint[iBlock] & iBandit == changeID[iBlock]){
-          banditMean[iBandit,iTrial,iBlock] <- banditMean[iBandit,iTrial,iBlock] + bonus[iBlock,iTrial-1]
+          banditMean[iBandit,iTrial-1,iBlock] <- banditMean[iBandit,iTrial-1,iBlock] + bonus[iBlock,iTrial-changepoint[iBlock]]
         }
          
         banditVariance[iBandit,iTrial,iBlock] <- (1 - (deltaFunction[iBandit] * kalmanGain[iBandit,iTrial-1,iBlock])) * (banditVariance[iBandit,iTrial-1,iBlock] + (zeta ^ 2))
@@ -57,10 +59,14 @@ KalmanPMU <- function(choices,points,zeta,epsilon,B,k,j){
                  "kalmanGain" = kalmanGain,
                  "choices" = choices,
                  "points" = points,
+                 "bonus" = bonus,
                  "changepoint" = changepoint,
                  "changeID" = changeID,
                  "allChoiceProb" = allChoiceProb,
                  "choiceProb" = choiceProb,
                  "negativeLL" = negativeLL)
-
+  } else{
+    output <- list("negativeLL" = NA)
+  }
+  
 }
