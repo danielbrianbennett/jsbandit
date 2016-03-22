@@ -26,13 +26,13 @@ LL <- function(zeta,epsilon,B,j,k) {
 }
 
 system.time(
-mle.fit <- mle(LL, 
-               start = list(zeta = varianceZeta_start, 
-                            epsilon = varianceEpsilon_start,
-                            B = B_start,
-                            j = j_start,
-                            k = k_start)
-)
+  mle.fit <- mle(LL, 
+                 start = list(zeta = varianceZeta_start, 
+                              epsilon = varianceEpsilon_start,
+                              B = B_start,
+                              j = j_start,
+                              k = k_start)
+  )
 )
 
 t1 <- Sys.time()
