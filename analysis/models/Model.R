@@ -1,28 +1,39 @@
 # install packages
-library('mvtnorm')
 library('stats4')
 
 # load data
 load("C:/Users/dbennett1/Google Drive/Works in Progress/JSBANDIT/Bandit/data/v2.2/banditData_v2point2.RData")
 
+# constants
+nBlocks <- length(unique(sorted.data$block))
+nTrials <- max(sorted.data$trial)
+
 # get input parameters
-varianceGamma_start <- 4
+varianceZeta_start <- 4
 varianceEpsilon_start <- 4
 participantID <- 10868001
 
-source("C:/Users/dbennett1/Documents/GitHub/jsbandit/analysis/KalmanPMU.R")
+#source("C:/Users/dbennett1/Documents/GitHub/jsbandit/analysis/KalmanPMU.R")
 
 participantData <- subset(sorted.data,ID == participantID)
 
+# extract choice and points data
+choices <- matrix(participantData$choice,nBlocks,nTrials,byrow = T)
+choices[choices == "top"] <- 1
+choices[choices == "right"] <- 2
+choices[choices == "bottom"] <- 3
+choices[choices == "left"] <- 4
+choices <- matrix(as.numeric(choices),nBlocks,nTrials)
+points <- matrix(participantData$pointsWon,nBlocks,nTrials,byrow = T)
 
-LL <- function(gamma,epsilon) {
-  output <- KalmanPMU(particpantData,gamma,epsilon)
+LL <- function(zeta,epsilon) {
+  output <- KalmanPMU(choices,points,zeta,epsilon)
   return(output$negativeLL)
 }
 
 t1 <- Sys.time()
 mle.fit <- mle(LL, 
-               start = list(gamma = varianceGamma_start),
+               start = list(zeta = varianceZeta_start),
                fixed = list(epsilon = 4))
 t2 <- Sys.time()
 
