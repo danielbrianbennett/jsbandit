@@ -1,7 +1,7 @@
 # parameters
-A <- 6 # size of change bonus
-k <- 2 # trial decay parameter
-j <- 1 # block decay parameter
+A <- 16.79 # size of change bonus
+k <- 14.74 # trial decay parameter
+j <- 1.2 # block decay parameter
 
 # constants
 nTrials <- 30 # number of trials to calculate bonus size for
@@ -14,7 +14,7 @@ bonusFunction <- function(nTrials, blockNumber, changeBonus, trialDecay, blockDe
   return( changeBonus * ( blockNumber ^ -blockDecay ) * ( c(1:nTrials) ^ -trialDecay ) )
 }
 
-# calculate and plot bonuses as a function of block and trial number
+# calculate and plot bo nuses as a function of block and trial number
 bonuses <- matrix(nrow = nBlocks, ncol = nTrials)
 par(mfrow = c(1,nBlocks))
 
