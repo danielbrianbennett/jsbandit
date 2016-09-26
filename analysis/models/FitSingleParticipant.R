@@ -3,8 +3,8 @@ library('stats4')
 library('mvtnorm')
 
 # load data
-load("C:/Users/dbennett1/Google Drive/Works in Progress/JSBANDIT/Bandit/data/v2.2/banditData_v2point2.RData")
-#load("/Users/Daniel/Google Drive/Works in Progress/JSBANDIT/Bandit/data/v2.2/banditData_v2point2.RData")
+#load("C:/Users/dbennett1/Google Drive/Works in Progress/JSBANDIT/Bandit/data/v2.2/banditData_v2point2.RData")
+load("~/Google Drive/Works in Progress/JSBANDIT/Bandit/data/v2.2/banditData_v2point2.RData")
 
 # get input parameters
 varianceZeta_start <- 5
@@ -14,10 +14,10 @@ j_start <- 0
 k_start <- 0
 participantID <- 46280863
 
-source("C:/Users/dbennett1/Documents/GitHub/jsbandit/analysis/models/ExtractParticipantData.R")
-source("C:/Users/dbennett1/Documents/GitHub/jsbandit/analysis/models/KalmanPMU.R")
-#source("/Users/Daniel/Git Repositories//jsbandit/analysis/models/ExtractParticipantData.R")
-#source("/Users/Daniel/Git Repositories//jsbandit/analysis/models/KalmanPMU.R")
+#source("C:/Users/dbennett1/Documents/GitHub/jsbandit/analysis/models/ExtractParticipantData.R")
+#source("C:/Users/dbennett1/Documents/GitHub/jsbandit/analysis/models/KalmanPMU.R")
+source("~/Documents/Git/jsbandit/analysis/models/ExtractParticipantData.R")
+source("~/Documents/Git/jsbandit/analysis/models//KalmanPMU.R")
 
 LL <- function(zeta,epsilon,B,j,k) {
   output <- KalmanPMU(choices,points,zeta,epsilon,B,j,k)
