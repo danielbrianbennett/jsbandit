@@ -3,8 +3,7 @@
 // 2.0 = turk pilot (first 20 participants)
 // 2.1 = pilot with asynchronous code fixed
 // 2.2 = first turk batch ()
-// 3.0 = pilot of experiment two (three colours) 
-version = 3.0;		
+version = 2.2;		
 
 // ------------ structural constants -------------
 
@@ -34,7 +33,7 @@ circleOffset = 140; 		// offset of circles from centre of html canvas
 lineWidth = 4; 				// line width for circle outline
 outlineColour = "#000000";	// standard outline of options
 selectionColour = "#00BFFF";// outline of selected option
-fillColours = ["#2F4F4F", "#0000CD", "#FFFF00"];		// fill colour of changed option per block
+fillColour = "#2F4F4F";		// fill colour of changed option
 
 // ------------ timing constants -------------
 
@@ -185,7 +184,6 @@ function startButtonClick(){
 	payoffs = assignPayoffs();
 	data.payoffs = payoffs;
 	changeNumber = Math.floor(Math.random() * ((changeWindowEnd + 1) - changeWindowStart) + changeWindowStart); 
-	fillColour = fillColours[0]
 	trialHandler();
 }
 
@@ -401,7 +399,6 @@ function showBlockFeedback(){
 	changeNumber = Math.floor(Math.random() * ((changeWindowEnd + 1) - changeWindowStart) + changeWindowStart); 
 	blockWinnings = 0;
 	maxBlockWinnings = 0;
-	fillColour = fillColours[blockNo]
 	setTimeout(function(){
 		if (blockNo < nBlocks) {
 		blockNo = blockNo + 1;			
