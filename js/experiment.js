@@ -184,7 +184,8 @@ function startButtonClick(){
 	data.walks = assignWalks();
 	payoffs = assignPayoffs();
 	data.payoffs = payoffs;
-	changeNumber = Math.floor(Math.random() * ((changeWindowEnd + 1) - changeWindowStart) + changeWindowStart); 
+	changeNumber = Math.floor(Math.random() * ((changeWindowEnd + 1) - changeWindowStart) + changeWindowStart);
+	fillColours  = shuffle(fillColours)
 	fillColour = fillColours[0]
 	trialHandler();
 }
@@ -592,6 +593,7 @@ function writeTrialData() {
 	data.pointsWon = pointsWon;
 	data.blockWinnings = blockWinnings;
 	data.whichFilled = whichFilled;
+	data.fillColour = fillColour
 	if ((trialNo + 1) == changeNumber){data.whichFilled = "none";};  // fix a problem in how filled circle is logged
 	if (trialNo > 1 || blockNo > 1){
 		data.payoffs = [];
@@ -602,16 +604,16 @@ function writeTrialData() {
 	}
 			
 	dataString = JSON.stringify( data )
-	//console.log( dataString ) // comment this out for the real thing
-    $.post('submit', {"content": dataString}); // uncomment this to have it actually write [remember to load jQuery!!]
+	console.log( dataString ) // comment this out for the real thing
+    //$.post('submit', {"content": dataString}); // uncomment this to have it actually write [remember to load jQuery!!]
 }
 
 
 // function writing data to disk
 function writeData(dataToWrite) {
 	var dataString = JSON.stringify( dataToWrite )
-	//console.log( dataString ) // comment this out for the real thing
-    $.post('submit', {"content": dataString}); // uncomment this to have it actually write [remember to load jQuery!!]
+	console.log( dataString ) // comment this out for the real thing
+    //$.post('submit', {"content": dataString}); // uncomment this to have it actually write [remember to load jQuery!!]
 }
 
 // ------------ functions: generic UI helpers -------------
@@ -694,3 +696,21 @@ function onBeforeUnloadHandler(e) {
   return message;
 };
 
+function shuffle(array) {
+  
+  var m = array.length, t, i;
+
+  // While there remain elements to shuffle…
+  while (m) {
+
+    // Pick a remaining element…
+    i = Math.floor(Math.random() * m--);
+
+    // And swap it with the current element.
+    t = array[m];
+    array[m] = array[i];
+    array[i] = t;
+  }
+
+  return array;
+}
