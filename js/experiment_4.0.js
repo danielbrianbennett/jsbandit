@@ -35,6 +35,7 @@ lineWidth = 4; 				// line width for circle outline
 outlineColour = "#000000";	// standard outline of options
 selectionColour = "#00BFFF";// outline of selected option
 fillColour = "#FFFFFF"		// set to white for this experiment
+tagTexts = ["       ???    ", "         good    ", "       bad    "] // these are the three possible tag texts
 
 // ------------ timing constants -------------
 
@@ -184,7 +185,10 @@ function startButtonClick(){
 	data.walks = assignWalks();
 	payoffs = assignPayoffs();
 	data.payoffs = payoffs;
-	changeNumber = Math.floor(Math.random() * ((changeWindowEnd + 1) - changeWindowStart) + changeWindowStart); 
+	changeNumber = Math.floor(Math.random() * ((changeWindowEnd + 1) - changeWindowStart) + changeWindowStart);
+	tagText = tagTexts[Math.floor(Math.random() * tagTexts.length)];
+
+
 	trialHandler();
 }
 
@@ -313,7 +317,7 @@ canvas.style.background = "white"
 
 if (whichFilled != "none"){
  	context.fillStyle = selectionColour;
-	context.fillText("????", indicatorTextX, indicatorTextY)	
+	context.fillText(tagText, indicatorTextX, indicatorTextY)	
 	drawArrow(arrowStartX, arrowStartY, arrowEndX, arrowEndY)	
 }
 
@@ -622,6 +626,7 @@ function writeTrialData() {
 	data.pointsWon = pointsWon;
 	data.blockWinnings = blockWinnings;
 	data.whichFilled = whichFilled;
+	data.tagText = tagText;
 	if ((trialNo + 1) == changeNumber){data.whichFilled = "none";};  // fix a problem in how filled circle is logged
 	if (trialNo > 1 || blockNo > 1){
 		data.payoffs = [];
