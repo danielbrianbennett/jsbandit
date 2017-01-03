@@ -3,7 +3,8 @@
 // 2.0 = turk pilot (first 20 participants)
 // 2.1 = pilot with asynchronous code fixed
 // 2.2 = first turk batch ()
-// 3.0 = pilot of experiment two (three colours) 
+// 3.0 = pilot of experiment two (three colours)
+// 4.0 = pilot of experiment three (semantic tags)
 version = 3.0;		
 
 // ------------ structural constants -------------
@@ -34,8 +35,7 @@ circleOffset = 140; 		// offset of circles from centre of html canvas
 lineWidth = 4; 				// line width for circle outline
 outlineColour = "#000000";	// standard outline of options
 selectionColour = "#00BFFF";// outline of selected option
-fillColour = "#FFFFFF"		// set to white for this experiment
-tagTexts = ["       ???    ", "         good    ", "       bad    "] // these are the three possible tag texts
+fillColours = ["#2F4F4F", "#0000CD", "#FFFF00"];		// fill colour of changed option per block
 
 // ------------ timing constants -------------
 
@@ -147,6 +147,7 @@ function instructionButtonClick() {
 		setDisplay('instruction','none') 
  		setDisplay('check','') 
  		setHeader('Check Your Knowledge!')
+ 		scrollTo('top')
  		toc = Date.now() // stop timer [see ***]
 //		setDisplay('start','');
 		
@@ -186,9 +187,8 @@ function startButtonClick(){
 	payoffs = assignPayoffs();
 	data.payoffs = payoffs;
 	changeNumber = Math.floor(Math.random() * ((changeWindowEnd + 1) - changeWindowStart) + changeWindowStart);
-	tagText = tagTexts[Math.floor(Math.random() * tagTexts.length)];
-
-
+	fillColours  = shuffle(fillColours)
+	fillColour = fillColours[0]
 	trialHandler();
 }
 
@@ -274,52 +274,21 @@ switch(whichSelected) {
 switch(whichFilled) {
 	case "top":
 		topFill = fillColour;
-		indicatorTextX = centreX - (1.5 * circleOffset)
-		indicatorTextY = centreY - circleOffset
-		arrowStartX = centreX - circleOffset
-		arrowStartY = centreY - circleOffset
-		arrowEndX = centreX - (1.6 * radius)
-		arrowEndY = centreY - circleOffset
 		break
 	case "bottom":
 		bottomFill = fillColour;
-		indicatorTextX = centreX - (1.5 * circleOffset)
-		indicatorTextY = centreY + circleOffset
-		arrowStartX = centreX - circleOffset
-		arrowStartY = centreY + circleOffset
-		arrowEndX = centreX - (1.6 * radius)
-		arrowEndY = centreY + circleOffset
 		break
 	case "left":
 		leftFill = fillColour;
-		indicatorTextX = centreX - (2.5 * circleOffset)
-		indicatorTextY = centreY + circleOffset
- 		indicatorTextY = centreY
-		arrowStartX = centreX - (2 * circleOffset)
-		arrowStartY = centreY
-		arrowEndX = centreX - circleOffset - (1.6 * radius)
-		arrowEndY = centreY
 		break
 	case "right":
 		rightFill = fillColour;
-		indicatorTextX = centreX + (2.5 * circleOffset)
-		indicatorTextY = centreY
-		arrowStartX = centreX + (2.3 * circleOffset)
-		arrowStartY = centreY
-		arrowEndX = centreX + circleOffset + (1.75 * radius)
-		arrowEndY = centreY
 		break
 	default:
 		break
 }
 
 canvas.style.background = "white"
-
-if (whichFilled != "none"){
- 	context.fillStyle = selectionColour;
-	context.fillText(tagText, indicatorTextX, indicatorTextY)	
-	drawArrow(arrowStartX, arrowStartY, arrowEndX, arrowEndY)	
-}
 
 // draw top circle
 context.fillStyle = topFill;
@@ -360,7 +329,6 @@ context.lineWidth = lineWidth;
 context.strokeStyle = rightStroke;
 context.closePath();
 context.stroke();
-
 }
 
 // highlight the selected option (but don't show points yet)
@@ -436,6 +404,7 @@ function showBlockFeedback(){
 	changeNumber = Math.floor(Math.random() * ((changeWindowEnd + 1) - changeWindowStart) + changeWindowStart); 
 	blockWinnings = 0;
 	maxBlockWinnings = 0;
+	fillColour = fillColours[blockNo]
 	setTimeout(function(){
 		if (blockNo < nBlocks) {
 		blockNo = blockNo + 1;			
@@ -626,7 +595,7 @@ function writeTrialData() {
 	data.pointsWon = pointsWon;
 	data.blockWinnings = blockWinnings;
 	data.whichFilled = whichFilled;
-	data.tagText = tagText;
+	data.fillColour = fillColour
 	if ((trialNo + 1) == changeNumber){data.whichFilled = "none";};  // fix a problem in how filled circle is logged
 	if (trialNo > 1 || blockNo > 1){
 		data.payoffs = [];
@@ -637,16 +606,16 @@ function writeTrialData() {
 	}
 			
 	dataString = JSON.stringify( data )
-	//console.log( dataString ) // comment this out for the real thing
-    $.post('submit', {"content": dataString}); // uncomment this to have it actually write [remember to load jQuery!!]
+	console.log( dataString ) // comment this out for the real thing
+    //$.post('submit', {"content": dataString}); // uncomment this to have it actually write [remember to load jQuery!!]
 }
 
 
 // function writing data to disk
 function writeData(dataToWrite) {
 	var dataString = JSON.stringify( dataToWrite )
-	//console.log( dataString ) // comment this out for the real thing
-    $.post('submit', {"content": dataString}); // uncomment this to have it actually write [remember to load jQuery!!]
+	console.log( dataString ) // comment this out for the real thing
+    //$.post('submit', {"content": dataString}); // uncomment this to have it actually write [remember to load jQuery!!]
 }
 
 // ------------ functions: generic UI helpers -------------
@@ -729,39 +698,21 @@ function onBeforeUnloadHandler(e) {
   return message;
 };
 
-function drawArrow(fromx, fromy, tox, toy){
-	//variables to be used when creating the arrow
-	var c = document.getElementById("canvasHandle");
-	var ctx = c.getContext("2d");
-	var headlen = 10;
+function shuffle(array) {
+  
+  var m = array.length, t, i;
 
-	var angle = Math.atan2(toy-fromy,tox-fromx);
+  // While there remain elements to shuffle…
+  while (m) {
 
-	//starting path of the arrow from the start square to the end square and drawing the stroke
-	ctx.beginPath();
-	ctx.moveTo(fromx, fromy);
-	ctx.lineTo(tox, toy);
-	ctx.strokeStyle = "#00BFFF";
-	ctx.lineWidth = 22;
-	ctx.stroke();
+    // Pick a remaining element…
+    i = Math.floor(Math.random() * m--);
 
-	//starting a new path from the head of the arrow to one of the sides of the point
-	ctx.beginPath();
-	ctx.moveTo(tox, toy);
-	ctx.lineTo(tox-headlen*Math.cos(angle-Math.PI/7),toy-headlen*Math.sin(angle-Math.PI/7));
+    // And swap it with the current element.
+    t = array[m];
+    array[m] = array[i];
+    array[i] = t;
+  }
 
-	//path from the side point of the arrow, to the other side point
-	ctx.lineTo(tox-headlen*Math.cos(angle+Math.PI/7),toy-headlen*Math.sin(angle+Math.PI/7));
-
-	//path from the side point back to the tip of the arrow, and then again to the opposite side point
-	ctx.lineTo(tox, toy);
-	ctx.lineTo(tox-headlen*Math.cos(angle-Math.PI/7),toy-headlen*Math.sin(angle-Math.PI/7));
-
-	//draws the paths created above
-	ctx.strokeStyle = "#00BFFF";
-	ctx.lineWidth = 22;
-	ctx.stroke();
-	ctx.fillStyle = "#00BFFF";
-	ctx.fill();
+  return array;
 }
-
