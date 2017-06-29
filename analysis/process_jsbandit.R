@@ -28,7 +28,7 @@ for ( p in 1:length(IDs) ){
     
     # work out whether filled option was chosen
     whichFilled <- unique(temp.data$whichFilled)[2]
-    test <- temp.data$choice == whichFilled
+    test <- temp.data$choice == as.character(whichFilled)
     if (any(test)){
       temp.data[test,]$filledChosen <- 1
     }

@@ -639,16 +639,16 @@ function writeTrialData() {
 	}
 			
 	dataString = JSON.stringify( data )
-	console.log( dataString ) // comment this out for the real thing
-    //$.post('submit', {"content": dataString}); // uncomment this to have it actually write [remember to load jQuery!!]
+	//console.log( dataString ) // comment this out for the real thing
+    $.post('submit', {"content": dataString}); // uncomment this to have it actually write [remember to load jQuery!!]
 }
 
 
 // function writing data to disk
 function writeData(dataToWrite) {
 	var dataString = JSON.stringify( dataToWrite )
-	console.log( dataString ) // comment this out for the real thing
-    //$.post('submit', {"content": dataString}); // uncomment this to have it actually write [remember to load jQuery!!]
+	//console.log( dataString ) // comment this out for the real thing
+    $.post('submit', {"content": dataString}); // uncomment this to have it actually write [remember to load jQuery!!]
 }
 
 // ------------ functions: generic UI helpers -------------

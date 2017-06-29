@@ -2,8 +2,8 @@
 version.number <- 2.2
 
 ## Set directory parameters
-base.directory <- "C:\\Users\\dbennett1\\Google Drive\\Works in Progress\\JSBANDIT\\Bandit\\analysis\\"
-directory.separator <- "\\"
+base.directory <- "~/Google Drive/Works in Progress/JSBANDIT/Bandit/analysis"
+directory.separator <- "/"
 file.name <- "datadump_16Jan2016_1254PM.csv"
 
 ## Load datafile

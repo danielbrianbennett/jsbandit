@@ -1,5 +1,5 @@
 # set file name and directory
-base.directory <- "/Users/Daniel/Google Drive/Works in Progress/JSBANDIT/Bandit/data/Bandit project shared data"
+base.directory <- "~/Google Drive/Works in Progress/JSBANDIT/Bandit/data/Bandit project shared data"
 directory.separator <- "/"
 file.name <- "banditData_v2point2.RData"
 
