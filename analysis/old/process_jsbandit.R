@@ -19,6 +19,7 @@ for ( p in 1:length(IDs) ){
     # check for weird data
     if (length(temp.data$trial) != nTrials) {
       weirdParticipants <- c(weirdParticipants, unique(temp.data$ID))
+      break
     }
     
     # assign changeLag
@@ -41,6 +42,11 @@ for ( p in 1:length(IDs) ){
   }
 }
 
+# work out which are the weird participants and exclude them
+weirdParticipants <- unique(weirdParticipants)
+weird.data <- subset(sorted.data, (sorted.data$ID %in% weirdParticipants))
+sorted.data <- subset(sorted.data, !(sorted.data$ID %in% weirdParticipants))
+
 # define as either switch or stay
 for (i in 1:nrow(sorted.data)) {
   if (sorted.data[i,]$trial > 1 && sorted.data[i,]$choice == sorted.data[i-1,]$choice){
@@ -49,8 +55,3 @@ for (i in 1:nrow(sorted.data)) {
     sorted.data[i,]$switchChoice <- 1
   }
 }
-
-# work out which are the weird participants and exclude them
-weirdParticipants <- unique(weirdParticipants)
-weird.data <- subset(sorted.data, (sorted.data$ID %in% weirdParticipants))
-sorted.data <- subset(sorted.data, !(sorted.data$ID %in% weirdParticipants))
