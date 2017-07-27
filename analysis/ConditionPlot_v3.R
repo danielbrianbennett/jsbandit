@@ -27,7 +27,7 @@ choice.plot <- ggplot(choice.by.lag,
   #   colour = "gray",fill = "gray", alpha = 0.4) +
   geom_line(size = 2) +
   geom_point(size = 4, shape = 21, fill = "white") +
-  labs(x = "Change Lag", y = "Oddball Choice Proportion", title = "Oddball Choice Proportion Pre/Post Change (bad tag condition)") +
+  labs(x = "Change Lag", y = "Oddball Choice Proportion", title = "Oddball Choice Proportion Pre/Post Change") +
   theme(axis.text = element_text(size = 14), plot.title = element_text(size = 20), axis.title = element_text(size = 16, face = "bold")) + 
   scale_x_continuous(breaks = c(-10:-1, 1:10)) +
   xlim(-10,10) +
@@ -91,6 +91,24 @@ choice.plot <- ggplot(plot.data,
   scale_x_continuous(breaks = c(-10:-1, 1:10)) +
   xlim(-10,10) +
   ylim(0,1)
+
+# build short plot
+choice.plot
+
+# create short plot comparing tags blockwise
+plot.data <- subset(choice.by.lag, block == 1)
+choice.plot <- ggplot(plot.data,
+                      aes(x = lag, y = meanProp, group = colour, colour = colour)) +
+  # geom_ribbon(aes(ymin = pmax(0, meanProp - sdProp), ymax = pmin(meanProp + sdProp,1)),
+  #   colour = "gray",fill = "gray", alpha = 0.4) +
+  geom_line(size = 2) +
+  geom_point(size = 4, shape = 21, fill = "white") +
+  labs(x = "Change Lag", y = "Oddball Choice Proportion", title = "Oddball Choice Proportion Pre/Post Change (block 1 only)") +
+  theme(axis.text = element_text(size = 14), plot.title = element_text(size = 20), axis.title = element_text(size = 16, face = "bold")) + 
+  scale_x_continuous(breaks = c(-10:-1, 1:10)) +
+  xlim(-10,10) +
+  ylim(0,1) +
+  scale_colour_manual(values=cbPalette)
 
 # build short plot
 choice.plot

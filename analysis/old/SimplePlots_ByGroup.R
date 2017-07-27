@@ -30,7 +30,7 @@ choice.plot <- ggplot(choice.by.lag,
   theme(axis.text = element_text(size = 14), plot.title = element_text(size = 20), axis.title = element_text(size = 16, face = "bold")) + 
   scale_x_continuous(breaks = c(-10:-1, 1:10)) +
   xlim(-10,10) +
-  ylim(0,.6)
+  ylim(0,1)
 
 
 # build short plot

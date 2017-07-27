@@ -14,8 +14,12 @@ load(filename)
 
 # restrict ourself to the first trial post-change
 eligible.data <- subset(sorted.data, (sorted.data$changeLag >= 1))
+#eligible.data$fillColour <- as.factor(eligible.data$fillColour)
+#eligible.data$tagText <- as.factor(eligible.data$tagText)
 
 # logistic regression
-glm.fit <- glm(filledChosen ~ block*trial, data = eligible.data, family = binomial(link = "logit"))
+glm.fit <- glm(filledChosen ~ block + changeLag + block:changeLag + fillColour,
+               data = eligible.data,
+               family = binomial(link = "logit"))
 
 summary(glm.fit)

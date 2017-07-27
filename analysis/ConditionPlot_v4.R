@@ -82,7 +82,7 @@ choice.plot <- ggplot(choice.by.lag.cond,
   #   colour = "gray",fill = "gray", alpha = 0.4) +
   geom_line(size = 2) +
   geom_point(size = 4, shape = 21, fill = "white") +
-  labs(x = "Change Lag", y = "Oddball Choice Proportion", title = "Oddball Choice Proportion Pre/Post Change (bad tag condition)") +
+  labs(x = "Change Lag", y = "Oddball Choice Proportion", title = "Oddball Choice Proportion Pre/Post Change") +
   theme(axis.text = element_text(size = 14), plot.title = element_text(size = 20), axis.title = element_text(size = 16, face = "bold")) + 
   scale_x_continuous(breaks = c(-10:-1, 1:10)) +
   xlim(-10,10) +
