@@ -25,4 +25,27 @@ choice.prop.chart <- ggplot(choice.prop,
             
 # build plot
 choice.prop.chart
-                            
+                    
+
+# choice prop by block
+choice.by.lag <- aggregate(proximal.data$filledChosen, by = list(proximal.data$changeLag, proximal.data$block), FUN = mean)
+sd.by.lag <- aggregate(proximal.data$filledChosen, by = list(proximal.data$changeLag, proximal.data$block), FUN = sd)
+choice.by.lag$sd <- sd.by.lag$x
+colnames(choice.by.lag) <- list("Lag", "Block", "Mean", "SD")
+
+choice.prop.chart <- ggplot(data = choice.by.lag, 
+                            aes(x = Lag, y = Mean, group = Block)) + 
+                            geom_line(aes(colour = as.factor(Block))) + 
+                            geom_ribbon(aes(ymin = pmax(0, Mean - SD), ymax = pmin(Mean, SD,1), colour = as.factor(Block), fill = as.factor(Block)),
+                            alpha = 0.2)  +
+                            geom_point(size = 4, shape = 21, fill = "white") +
+                            xlim(-5,7) +
+                            ylim(0,1) +
+                            labs(x = "Change Lag", y = "Oddball Choice Proportion", title = "Oddball Choice Proportion Pre/Post Change") +
+                            theme(axis.text = element_text(size = 14), plot.title = element_text(size = 20), axis.title = element_text(size = 16, face = "bold")) + 
+                            scale_x_continuous(breaks = c(-5:-1, 1:7)) +
+                            geom_segment(aes(x = 0, y = 0, xend = 0, yend = 1), linetype = "dashed", size = 1)
+
+# build plot
+choice.prop.chart
+
