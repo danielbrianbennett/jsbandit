@@ -15,7 +15,7 @@ variance0 <- 1000
 # define working directory and datafile
 dataDir <- "~/Documents/Git/jsbandit/data/"
 dataFile <- "banditData_v2point2.RData"
-stanFile <- "~/Documents/Git/bandit-jags/bandit_jags_single.txt"
+stanFile <- "~/Documents/Git/bandit-jags/analysis/models/stan/bandit_stan_single.txt"
 
 # set working directory and load file
 setwd(dataDir)
@@ -78,6 +78,6 @@ initVals <-	list(list(
   q = .1
 ))
 
-# call jags
+# call stan
 samples <- jags(data, inits=initVals, parameters, model.file = bugsFile, 
                 n.chains=1, n.iter=5000, n.burnin=2000, n.thin=1)
