@@ -57,7 +57,7 @@ real<lower=0> sigma_epsilon[nSubjects];
 real b[nSubjects];
 real p[nSubjects];
 real q[nSubjects];
-real<lower=0,upper=100> beta[nSubjects];
+real<lower=0> beta[nSubjects];
 
 }
 
