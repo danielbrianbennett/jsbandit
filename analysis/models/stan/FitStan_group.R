@@ -99,7 +99,7 @@ myInits <- list(list(
   mu_b = 5,
   mu_p = 5,
   mu_q = 5,
-  mu_beta = .5,
+  mu_beta = 5,
   sigma_sigma_epsilon = 10,
   sigma_b = 10,
   sigma_p = 10,

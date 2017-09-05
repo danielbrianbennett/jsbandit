@@ -85,9 +85,6 @@ for (iSubject in 1:nSubjects){
     p[iSubject] ~ normal(mu_p,sigma_p);
     q[iSubject] ~ normal(mu_q,sigma_q);
     beta[iSubject] ~ normal(mu_beta,sigma_beta);
-    print(beta[iSubject])
-    print(mu_beta)
-    print(sigma_beta)
     
 
 
@@ -130,9 +127,6 @@ for (iSubject in 1:nSubjects){
 
       } // bandit loop 2
       // choices distributed as categorical distribution with probability vector as per the above
-      print(choiceProb[iBlock,iTrial,,iSubject])
-
-
       choices[iBlock,iTrial,iSubject] ~ categorical(to_vector(choiceProb[iBlock,iTrial,,iSubject]));
     
     } // trial
