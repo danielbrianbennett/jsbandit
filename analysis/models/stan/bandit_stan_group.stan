@@ -73,6 +73,18 @@ real u[nBlocks,nTrials,nBandits,nSubjects];
 real choiceProb[nBlocks,nTrials,nBandits,nSubjects];
 real indicatorChoices[nBlocks,nTrials,nSubjects];
 
+// group-level parameters
+mu_sigma_epsilon ~ normal(0,20);
+sigma_sigma_epsilon ~ normal(0,20);
+mu_b ~ normal(0,20);
+sigma_b ~ normal(0,20);
+mu_p ~ normal(0,10);
+sigma_p ~ normal(0,10);
+mu_q ~ normal(0,10);
+sigma_q ~ normal(0,10);
+mu_beta ~ normal(0,20);
+sigma_beta ~ normal(0,20);
+
 // assign indicator choices
 indicatorChoices = choices;
 

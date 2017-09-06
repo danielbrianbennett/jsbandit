@@ -6,11 +6,11 @@ library(rstan)
 library(tictoc)
 
 # set a couple of helpful variables
-participantNumbers <- 1:10 # which participant's data to test?
+participantNumbers <- 21:30 # which participants' data to test?
 nTrials <- 30 # per block
 nBlocks <- 3
 nBandits <- 4
-mean0 <- 50
+mean0 <- 20
 variance0 <- 1000
 sigma_zeta <- 5
 
@@ -113,8 +113,8 @@ samples <- stan(file = stanFile,
                 data = data, 
                 #init = myInits,  # If not specified, gives random inits
                 pars=parameters,
-                iter=1000, 
-                chains=3, 
+                iter=500, 
+                chains=1, 
                 thin=1
                 # warmup = 100  # Stands for burn-in; Default = iter/2
                 # seed = 123  # Setting seed; Default is random seed
