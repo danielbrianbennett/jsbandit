@@ -90,53 +90,53 @@ indicatorChoices = choices;
 // Loop through blocks
 for (iSubject in 1:nSubjects){
 
-// sigma parameters distributed as uniform
-b[iSubject] ~ normal(mu_b,sigma_b);
-p[iSubject] ~ normal(mu_p,sigma_p);
-q[iSubject] ~ normal(mu_q,sigma_q);
-beta[iSubject] ~ normal(mu_beta,sigma_beta);
-
-// Loop through blocks
-for (iBlock in 1:nBlocks){
-
-// Loop through trials
-for (iTrial in 1:nTrials){
-
-// Loop through bandits a first time
-for (iBandit in 1:nBandits){
-
-// retrieve whether chosen for each bandit
-deltaFunction[iBlock,iTrial,iBandit,iSubject] = iBandit == indicatorChoices[iBlock,iTrial,iSubject] ? 1 : 0 ; // deltaFunction = 1 if bandit chosen, 0 otherwise
-bonus[iBlock,iTrial,iBandit,iSubject] = whichFilled[iBlock,iTrial,iSubject] == iBandit && changeLag[iBlock,iTrial,iSubject] > 0 ? (b[iSubject] * changeLag[iBlock,iTrial,iSubject]^p[iSubject] * (iBlock)^q[iSubject]) : 0;
-
-
-if (iTrial == 1){
-
-// calculate kalman gain, mean and variance of each bandit
-kalmanGain[iBlock,iTrial,iBandit,iSubject] = (variance0 + sigma_zeta^2) /  (variance0 + sigma_zeta^2 + sigma_epsilon^2); 
-banditVariance[iBlock,iTrial,iBandit,iSubject] = (1 - deltaFunction[iBlock,iTrial,iBandit,iSubject] * kalmanGain[iBlock,iTrial,iBandit,iSubject]) * (variance0 + sigma_zeta^2); // K&S, eq. 5
-banditMean[iBlock,iTrial,iBandit,iSubject] = mean0 + (deltaFunction[iBlock,iTrial,iBandit,iSubject] * kalmanGain[iBlock,iTrial,iBandit,iSubject] * (points[iBlock,iTrial,iSubject] - mean0)) + bonus[iBlock,iTrial,iBandit,iSubject] ;// K&S, eq. 4
-
-} else {
-
-// calculate kalman gain, mean and variance of each bandit
-kalmanGain[iBlock,iTrial,iBandit,iSubject] = (banditVariance[iBlock,iTrial-1,iBandit,iSubject] + sigma_zeta^2) /  (banditVariance[iBlock,iTrial-1,iBandit,iSubject] + sigma_zeta^2 + sigma_epsilon^2); 
-banditVariance[iBlock,iTrial,iBandit,iSubject] = (1 - deltaFunction[iBlock,iTrial,iBandit,iSubject] * kalmanGain[iBlock,iTrial,iBandit,iSubject]) * (banditVariance[iBlock,iTrial-1,iBandit,iSubject] + sigma_zeta^2); // K&S, eq. 5
-banditMean[iBlock,iTrial,iBandit,iSubject] = banditMean[iBlock,iTrial-1,iBandit,iSubject] + (deltaFunction[iBlock,iTrial,iBandit,iSubject] * kalmanGain[iBlock,iTrial,iBandit,iSubject] * (points[iBlock,iTrial,iSubject] - banditMean[iBlock,iTrial-1,iBandit,iSubject])) + bonus[iBlock,iTrial,iBandit,iSubject] ;// K&S, eq. 4
-
-}
-
-} // bandit loop 1
-// Loop through bandits a second time
-
-for (iBandit in 1:nBandits){
-choiceProb[iBlock,iTrial,iBandit,iSubject] = exp(beta[iSubject] * banditMean[iBlock,iTrial,iBandit,iSubject] - max(beta[iSubject] * to_vector(banditMean[iBlock,iTrial,,iSubject]))) / sum(exp(beta[iSubject] * to_vector(banditMean[iBlock,iTrial,,iSubject]) - max(beta[iSubject] * to_vector(banditMean[iBlock,iTrial,,iSubject]))));
-
-} // bandit loop 2
-// choices distributed as categorical distribution with probability vector as per the above
-choices[iBlock,iTrial,iSubject] ~ categorical(to_vector(choiceProb[iBlock,iTrial,,iSubject]));
-
-} // trial
-} // block
+  // sigma parameters distributed as uniform
+  b[iSubject] ~ normal(mu_b,sigma_b);
+  p[iSubject] ~ normal(mu_p,sigma_p);
+  q[iSubject] ~ normal(mu_q,sigma_q);
+  beta[iSubject] ~ normal(mu_beta,sigma_beta);
+  
+  // Loop through blocks
+  for (iBlock in 1:nBlocks){
+  
+    // Loop through trials
+    for (iTrial in 1:nTrials){
+    
+      // Loop through bandits a first time
+      for (iBandit in 1:nBandits){
+      
+      // retrieve whether chosen for each bandit
+      deltaFunction[iBlock,iTrial,iBandit,iSubject] = iBandit == indicatorChoices[iBlock,iTrial,iSubject] ? 1 : 0 ; // deltaFunction = 1 if bandit chosen, 0 otherwise
+      bonus[iBlock,iTrial,iBandit,iSubject] = whichFilled[iBlock,iTrial,iSubject] == iBandit && changeLag[iBlock,iTrial,iSubject] > 0 ? (b[iSubject] * changeLag[iBlock,iTrial,iSubject]^p[iSubject] * (iBlock)^q[iSubject]) : 0;
+      
+      
+      if (iTrial == 1){
+      
+        // calculate kalman gain, mean and variance of each bandit
+        kalmanGain[iBlock,iTrial,iBandit,iSubject] = (variance0 + sigma_zeta^2) /  (variance0 + sigma_zeta^2 + sigma_epsilon^2); 
+        banditVariance[iBlock,iTrial,iBandit,iSubject] = (1 - deltaFunction[iBlock,iTrial,iBandit,iSubject] * kalmanGain[iBlock,iTrial,iBandit,iSubject]) * (variance0 + sigma_zeta^2); // K&S, eq. 5
+        banditMean[iBlock,iTrial,iBandit,iSubject] = mean0 + (deltaFunction[iBlock,iTrial,iBandit,iSubject] * kalmanGain[iBlock,iTrial,iBandit,iSubject] * (points[iBlock,iTrial,iSubject] - mean0)) + bonus[iBlock,iTrial,iBandit,iSubject] ;// K&S, eq. 4
+      
+      } else {
+      
+        // calculate kalman gain, mean and variance of each bandit
+        kalmanGain[iBlock,iTrial,iBandit,iSubject] = (banditVariance[iBlock,iTrial-1,iBandit,iSubject] + sigma_zeta^2) /  (banditVariance[iBlock,iTrial-1,iBandit,iSubject] + sigma_zeta^2 + sigma_epsilon^2); 
+        banditVariance[iBlock,iTrial,iBandit,iSubject] = (1 - deltaFunction[iBlock,iTrial,iBandit,iSubject] * kalmanGain[iBlock,iTrial,iBandit,iSubject]) * (banditVariance[iBlock,iTrial-1,iBandit,iSubject] + sigma_zeta^2); // K&S, eq. 5
+        banditMean[iBlock,iTrial,iBandit,iSubject] = banditMean[iBlock,iTrial-1,iBandit,iSubject] + (deltaFunction[iBlock,iTrial,iBandit,iSubject] * kalmanGain[iBlock,iTrial,iBandit,iSubject] * (points[iBlock,iTrial,iSubject] - banditMean[iBlock,iTrial-1,iBandit,iSubject])) + bonus[iBlock,iTrial,iBandit,iSubject] ;// K&S, eq. 4
+      
+      }
+      
+    } // bandit loop 1
+    // Loop through bandits a second time
+    
+    for (iBandit in 1:nBandits){
+      choiceProb[iBlock,iTrial,iBandit,iSubject] = exp(beta[iSubject] * banditMean[iBlock,iTrial,iBandit,iSubject] - max(beta[iSubject] * to_vector(banditMean[iBlock,iTrial,,iSubject]))) / sum(exp(beta[iSubject] * to_vector(banditMean[iBlock,iTrial,,iSubject]) - max(beta[iSubject] * to_vector(banditMean[iBlock,iTrial,,iSubject]))));
+    
+    } // bandit loop 2
+    // choices distributed as categorical distribution with probability vector as per the above
+    choices[iBlock,iTrial,iSubject] ~ categorical(to_vector(choiceProb[iBlock,iTrial,,iSubject]));
+    
+    } // trial
+  } // block
 } //subject
 }
