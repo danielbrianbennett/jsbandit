@@ -10,14 +10,14 @@ participantNumbers <- 21:30 # which participants' data to test?
 nTrials <- 30 # per block
 nBlocks <- 3
 nBandits <- 4
-mean0 <- 20
-variance0 <- 1000
+# mean0 <- 20
+# variance0 <- 1000
 sigma_zeta <- 5
 
 # define working directory and datafile
 dataDir <- "~/Documents/Git/jsbandit/data/"
 dataFile <- "banditData_v2point2.RData"
-stanFile <- "/Users/danielbennett/Documents/Git/jsbandit/analysis/models/stan/bandit_stan_group.stan"
+stanFile <- "/Users/danielbennett/Documents/Git/jsbandit/analysis/models/stan/bandit_stan_group_optim.stan"
 
 # set working directory and load file
 setwd(dataDir)
@@ -65,24 +65,27 @@ data <- list(choices = choices,
              nBlocks = nBlocks,
              nTrials = nTrials,
              nSubjects = nSubjects,
-             mean0 = mean0,
-             variance0 = variance0,
+             # mean0 = mean0,
+             # variance0 = variance0,
              changeLag = changeLag,
              sigma_zeta = sigma_zeta
 ) 
 
 # list parameters to estimate in stan
-parameters <- c("mu_sigma_epsilon",
+parameters <- c("sigma_epsilon",
+                # "mu_sigma_epsilon",
                 "mu_b",
                 "mu_p",
                 "mu_q",
                 "mu_beta",
-                "sigma_sigma_epsilon",
+                # "sigma_sigma_epsilon",
                 "sigma_b",
                 "sigma_p",
                 "sigma_q",
                 "sigma_beta",
                 "sigma_epsilon",
+                "mean0",
+                "variance0",
                 "b",
                 "p",
                 "q",
@@ -95,16 +98,19 @@ options(mc.cores = parallel::detectCores())
 
 # set inits
 myInits <- list(list(
-  mu_sigma_epsilon = 5,
+  # mu_sigma_epsilon = 5,
+  sigma_epsilon = 5,
   mu_b = 5,
   mu_p = 5,
   mu_q = 5,
   mu_beta = 5,
-  sigma_sigma_epsilon = 10,
+  # sigma_sigma_epsilon = 10,
   sigma_b = 10,
   sigma_p = 10,
   sigma_q = 10,
-  sigma_beta = 1
+  sigma_beta = 1,
+  mean0 = 10,
+  variance0 = 100
   ))
 
 # Call stan 
@@ -113,7 +119,7 @@ samples <- stan(file = stanFile,
                 data = data, 
                 #init = myInits,  # If not specified, gives random inits
                 pars=parameters,
-                iter=500, 
+                iter=1000, 
                 chains=1, 
                 thin=1
                 # warmup = 100  # Stands for burn-in; Default = iter/2
