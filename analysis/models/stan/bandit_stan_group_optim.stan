@@ -67,13 +67,12 @@ real banditVariance[nSubjects,nBlocks,nTrials,nBandits];
 int deltaFunction[nSubjects,nBlocks,nTrials,nBandits];
 real bonus[nSubjects,nBlocks,nTrials,nBandits];
 real kalmanGain[nSubjects,nBlocks,nTrials,nBandits];
-real u[nSubjects,nBlocks,nTrials,nBandits];
 real choiceProb[nSubjects,nBlocks,nTrials,nBandits];
 real indicatorChoices[nSubjects,nBlocks,nTrials];
 
 // group-level parameters
-mu_b ~ normal(0,20);
-sigma_b ~ normal(0,20);
+mu_b ~ normal(0,50);
+sigma_b ~ normal(0,50);
 mu_p ~ normal(0,10);
 sigma_p ~ normal(0,10);
 mu_q ~ normal(0,10);

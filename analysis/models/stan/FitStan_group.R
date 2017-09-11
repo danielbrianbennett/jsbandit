@@ -6,7 +6,7 @@ library(rstan)
 library(tictoc)
 
 # set a couple of helpful variables
-participantNumbers <- 21:30 # which participants' data to test?
+participantNumbers <- 1:149 # which participants' data to test?
 nTrials <- 30 # per block
 nBlocks <- 3
 nBandits <- 4
@@ -15,7 +15,7 @@ sigma_zeta <- 8
 # define working directory and datafile
 dataDir <- "~/Documents/Git/jsbandit/data/"
 dataFile <- "banditData_v2point2.RData"
-stanFile <- "/Users/danielbennett/Documents/Git/jsbandit/analysis/models/stan/bandit_stan_group_optim.stan"
+stanFile <- "/Users/danielbennett/Documents/Git/jsbandit/analysis/models/stan/bandit_stan_group_vector.stan"
 
 # set working directory and load file
 setwd(dataDir)
@@ -41,20 +41,6 @@ subsetID <- IDs[participantNumbers]
 extract <- subset(sorted.data, ID %in% subsetID)
 nSubjects = length(participantNumbers)
 
-# # create data containers to pass to stan, and fill them
-# choices <- array(data = NA, dim = c(nBlocks,nTrials,nSubjects)) # choice data
-# points <- array(data = NA, dim = c(nBlocks,nTrials,nSubjects)) # points data
-# changeLag <- array(data = NA, dim = c(nBlocks,nTrials,nSubjects)) # change lag data
-# whichFilled <- array(data = NA, dim = c(nBlocks,nTrials,nSubjects)) # which changed data
-# 
-# # deal data to the arrays built above
-# for (p in 1:nSubjects){
-#   choices[,,p] <- matrix(extract[extract$ID == subsetID[p],]$choice,nBlocks,nTrials,byrow = T)
-#   points[,,p] <- matrix(extract[extract$ID == subsetID[p],]$pointsWon,nBlocks,nTrials,byrow = T)
-#   changeLag[,,p] <- matrix(extract[extract$ID == subsetID[p],]$changeLag,nBlocks,nTrials,byrow = T)
-#   whichFilled[,,p] <- matrix(extract[extract$ID == subsetID[p],]$whichFilled,nBlocks,nTrials,byrow = T)
-# }
-
 # create data containers to pass to stan, and fill them
 choices <- array(data = NA, dim = c(nSubjects,nBlocks,nTrials)) # choice data
 points <- array(data = NA, dim = c(nSubjects,nBlocks,nTrials)) # points data
@@ -77,20 +63,16 @@ data <- list(choices = choices,
              nBlocks = nBlocks,
              nTrials = nTrials,
              nSubjects = nSubjects,
-             # mean0 = mean0,
-             # variance0 = variance0,
              changeLag = changeLag,
              sigma_zeta = sigma_zeta
 ) 
 
 # list parameters to estimate in stan
 parameters <- c("sigma_epsilon",
-                # "mu_sigma_epsilon"
                 "mu_b",
                 "mu_p",
                 "mu_q",
                 "mu_beta",
-                # "sigma_sigma_epsilon",
                 "sigma_b",
                 "sigma_p",
                 "sigma_q",
@@ -109,23 +91,26 @@ rstan_options(auto_write = TRUE)
 options(mc.cores = parallel::detectCores())
 
 # set inits
+load("~/Documents/Git/jsbandit/analysis/models/stan/savedInitVals.RData")
 initVals <- list(
-  sigma_epsilon = 5,
-  # mu_sigma_epsilon = 5,
-  mu_b = 5,
-  mu_p = 5,
-  mu_q = 5,
-  mu_beta = 2,
-  # sigma_sigma_epsilon = 10,
-  sigma_b = 10,
-  sigma_p = 10,
-  sigma_q = 10,
-  sigma_beta = 1,
-  mean0 = 10,
-  variance0 = 1000
+  sigma_epsilon = savedInitVals$sigma_epsilon,
+  mu_b = savedInitVals$mu_b,
+  mu_p = savedInitVals$mu_p,
+  mu_q = savedInitVals$mu_q,
+  mu_beta = savedInitVals$mu_beta,
+  sigma_b = savedInitVals$sigma_b,
+  sigma_p = savedInitVals$sigma_p,
+  sigma_q = savedInitVals$sigma_q,
+  sigma_beta = savedInitVals$sigma_beta,
+  mean0 = savedInitVals$mean0,
+  variance0 = savedInitVals$variance0,
+  b = savedInitVals$b,
+  p = savedInitVals$p,
+  q = savedInitVals$q,
+  beta = savedInitVals$beta
 )
 
-myInits <- list(initVals,initVals,initVals)
+myInits <- list(initVals,initVals)
 
 
 # Call stan 
@@ -135,9 +120,9 @@ samples <- stan(file = stanFile,
                 init = myInits,  # If not specified, gives random inits
                 pars=parameters,
                 iter=1000, 
-                chains=3, 
-                thin=1,
-                warmup = 300  # Stands for burn-in; Default = iter/2
+                chains=2, 
+                thin=1
+                # warmup = 0  # Stands for burn-in; Default = iter/2
                 # seed = 123  # Setting seed; Default is random seed
 )
 toc()
