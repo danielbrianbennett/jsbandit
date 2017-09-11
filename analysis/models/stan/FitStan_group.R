@@ -6,13 +6,11 @@ library(rstan)
 library(tictoc)
 
 # set a couple of helpful variables
-participantNumbers <- 28:30 # which participants' data to test?
+participantNumbers <- 21:30 # which participants' data to test?
 nTrials <- 30 # per block
 nBlocks <- 3
 nBandits <- 4
-# mean0 <- 20
-# variance0 <- 1000
-sigma_zeta <- 5
+sigma_zeta <- 8
 
 # define working directory and datafile
 dataDir <- "~/Documents/Git/jsbandit/data/"
@@ -43,18 +41,32 @@ subsetID <- IDs[participantNumbers]
 extract <- subset(sorted.data, ID %in% subsetID)
 nSubjects = length(participantNumbers)
 
+# # create data containers to pass to stan, and fill them
+# choices <- array(data = NA, dim = c(nBlocks,nTrials,nSubjects)) # choice data
+# points <- array(data = NA, dim = c(nBlocks,nTrials,nSubjects)) # points data
+# changeLag <- array(data = NA, dim = c(nBlocks,nTrials,nSubjects)) # change lag data
+# whichFilled <- array(data = NA, dim = c(nBlocks,nTrials,nSubjects)) # which changed data
+# 
+# # deal data to the arrays built above
+# for (p in 1:nSubjects){
+#   choices[,,p] <- matrix(extract[extract$ID == subsetID[p],]$choice,nBlocks,nTrials,byrow = T)
+#   points[,,p] <- matrix(extract[extract$ID == subsetID[p],]$pointsWon,nBlocks,nTrials,byrow = T)
+#   changeLag[,,p] <- matrix(extract[extract$ID == subsetID[p],]$changeLag,nBlocks,nTrials,byrow = T)
+#   whichFilled[,,p] <- matrix(extract[extract$ID == subsetID[p],]$whichFilled,nBlocks,nTrials,byrow = T)
+# }
+
 # create data containers to pass to stan, and fill them
-choices <- array(data = NA, dim = c(nBlocks,nTrials,nSubjects)) # choice data
-points <- array(data = NA, dim = c(nBlocks,nTrials,nSubjects)) # points data
-changeLag <- array(data = NA, dim = c(nBlocks,nTrials,nSubjects)) # change lag data
-whichFilled <- array(data = NA, dim = c(nBlocks,nTrials,nSubjects)) # which changed data
+choices <- array(data = NA, dim = c(nSubjects,nBlocks,nTrials)) # choice data
+points <- array(data = NA, dim = c(nSubjects,nBlocks,nTrials)) # points data
+changeLag <- array(data = NA, dim = c(nSubjects,nBlocks,nTrials)) # change lag data
+whichFilled <- array(data = NA, dim = c(nSubjects,nBlocks,nTrials)) # which changed data
 
 # deal data to the arrays built above
 for (p in 1:nSubjects){
-  choices[,,p] <- matrix(extract[extract$ID == subsetID[p],]$choice,nBlocks,nTrials,byrow = T)
-  points[,,p] <- matrix(extract[extract$ID == subsetID[p],]$pointsWon,nBlocks,nTrials,byrow = T)
-  changeLag[,,p] <- matrix(extract[extract$ID == subsetID[p],]$changeLag,nBlocks,nTrials,byrow = T)
-  whichFilled[,,p] <- matrix(extract[extract$ID == subsetID[p],]$whichFilled,nBlocks,nTrials,byrow = T)
+  choices[p,,] <- matrix(extract[extract$ID == subsetID[p],]$choice,nBlocks,nTrials,byrow = T)
+  points[p,,] <- matrix(extract[extract$ID == subsetID[p],]$pointsWon,nBlocks,nTrials,byrow = T)
+  changeLag[p,,] <- matrix(extract[extract$ID == subsetID[p],]$changeLag,nBlocks,nTrials,byrow = T)
+  whichFilled[p,,] <- matrix(extract[extract$ID == subsetID[p],]$whichFilled,nBlocks,nTrials,byrow = T)
 }
 
 # list data to be passed on to stan
@@ -73,7 +85,7 @@ data <- list(choices = choices,
 
 # list parameters to estimate in stan
 parameters <- c("sigma_epsilon",
-                # "mu_sigma_epsilon",
+                # "mu_sigma_epsilon"
                 "mu_b",
                 "mu_p",
                 "mu_q",
@@ -97,32 +109,35 @@ rstan_options(auto_write = TRUE)
 options(mc.cores = parallel::detectCores())
 
 # set inits
-myInits <- list(list(
-  # mu_sigma_epsilon = 5,
+initVals <- list(
   sigma_epsilon = 5,
+  # mu_sigma_epsilon = 5,
   mu_b = 5,
   mu_p = 5,
   mu_q = 5,
-  mu_beta = 5,
+  mu_beta = 2,
   # sigma_sigma_epsilon = 10,
   sigma_b = 10,
   sigma_p = 10,
   sigma_q = 10,
   sigma_beta = 1,
-  mean0 = 20,
-  variance0 = 100
-  ))
+  mean0 = 10,
+  variance0 = 1000
+)
+
+myInits <- list(initVals,initVals,initVals)
+
 
 # Call stan 
 tic()
 samples <- stan(file = stanFile,   
                 data = data, 
-                #init = myInits,  # If not specified, gives random inits
+                init = myInits,  # If not specified, gives random inits
                 pars=parameters,
                 iter=1000, 
-                chains=2, 
-                thin=1
-                # warmup = 100  # Stands for burn-in; Default = iter/2
+                chains=3, 
+                thin=1,
+                warmup = 300  # Stands for burn-in; Default = iter/2
                 # seed = 123  # Setting seed; Default is random seed
 )
 toc()
