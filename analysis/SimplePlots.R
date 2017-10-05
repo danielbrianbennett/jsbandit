@@ -5,12 +5,19 @@ library(ggplot2)
 rm(list = ls())
 
 # set version
-version <- "v4" # either v2point2, v3, or v4
+version <- "v2point2" # either v2point2, v3, or v4
 fileDir <- "~/Documents/Git/jsbandit/data/"
 
 # load file
 filename <- paste0(fileDir, "banditData_", version, ".RData")
 load(filename)
+
+# load list of filtered IDs
+filename <- paste0(fileDir, "filteredIDs_", version, ".RData")
+load(filename)
+
+# retain only participants with an ID in the white-list
+sorted.data <- sorted.data[sorted.data$ID %in% filtered.IDs,]
 
 # retrieve only data from 5 trials before to 7 trials after a change
 proximal.data <- subset(sorted.data, sorted.data$changeLag < 8 & sorted.data$changeLag > -6)

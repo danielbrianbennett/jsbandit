@@ -94,13 +94,13 @@ options(mc.cores = parallel::detectCores())
 load("~/Documents/Git/jsbandit/analysis/models/stan/savedInitVals.RData")
 initVals <- list(
   sigma_epsilon = savedInitVals$sigma_epsilon,
-  mu_b = savedInitVals$mu_b,
-  mu_p = savedInitVals$mu_p,
-  mu_q = savedInitVals$mu_q,
+  mu_b = 0,
+  mu_p = 0,
+  mu_q = 0,
   mu_beta = savedInitVals$mu_beta,
-  sigma_b = savedInitVals$sigma_b,
-  sigma_p = savedInitVals$sigma_p,
-  sigma_q = savedInitVals$sigma_q,
+  sigma_b = 20,
+  sigma_p = 20,
+  sigma_q = 20,
   sigma_beta = savedInitVals$sigma_beta,
   mean0 = savedInitVals$mean0,
   variance0 = savedInitVals$variance0,
@@ -119,10 +119,10 @@ samples <- stan(file = stanFile,
                 data = data, 
                 init = myInits,  # If not specified, gives random inits
                 pars=parameters,
-                iter=1000, 
+                iter=5000, 
                 chains=2, 
-                thin=1
-                # warmup = 0  # Stands for burn-in; Default = iter/2
+                thin=1,
+                warmup = 1000  # Default = iter/2
                 # seed = 123  # Setting seed; Default is random seed
 )
 toc()

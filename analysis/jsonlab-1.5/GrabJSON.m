@@ -16,7 +16,7 @@ v3outCounter = 1;
 v4outCounter = 1;
 regExpStr = '\{([^]+)\}';
 
-homeDir = '/Users/danielbennett/Google Drive/Works in Progress/JSBANDIT/Bandit/data/v3&4/';
+homeDir = '/Users/danielbennett/Documents/Publications/Other Projects/JSBANDIT/Bandit/data/v3&4/';
 
 %% Set filenames
 d = dir([homeDir 'datastore*']);
