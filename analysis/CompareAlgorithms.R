@@ -76,14 +76,14 @@ df <- data.frame(meanPoints = c(meanWinnings_random, meanWinnings, meanWinnings_
 
 cols <- c("Random" = "#000000", "Behaviour" = "#235ce1", "Maximum" = "#000000")
 
-p <- ggplot(data = df, aes(x = trialNo, y = meanPoints,  group = algorithm)) +
+p1 <- ggplot(data = df, aes(x = trialNo, y = meanPoints,  group = algorithm)) +
   geom_ribbon(aes(ymin = meanPoints - ciPoints, ymax = meanPoints + ciPoints), 
               fill = "grey", alpha = 0.6)  +
   geom_line(aes(color = algorithm, linetype = algorithm), size = 1) +
   geom_point(aes(color = algorithm, shape = algorithm),size = 3, fill = "#235ce1") +
   labs(x = "\nTrial number", y = "Points per trial\n")
      
-p + scale_color_manual(values = cols) +
+p1 + scale_color_manual(values = cols) +
   scale_linetype_manual(values = c("solid","solid","dotted")) + 
   scale_shape_manual(values = c(21,32,32)) +
   theme(panel.grid = element_blank(), 
@@ -107,13 +107,13 @@ df <- data.frame(meanPoints = overallBlockMean,
                  ciPoints = overallBlockCI,
                  block = c("Block 1","Block 2","Block 3"))
 
-p <- ggplot(data = df, aes(x = block, y = meanPoints)) +
+p2 <- ggplot(data = df, aes(x = block, y = meanPoints)) +
   geom_col(width = 0.6, fill = "white",colour = "black", size = 1.5) +
   geom_errorbar(aes(y = meanPoints, ymin = meanPoints - ciPoints, ymax = meanPoints + ciPoints, width = 0.2)) +
   labs(x = "\nBlock", y = "Points per trial\n")
 
 
-p + theme(panel.grid = element_blank(), 
+p2 + theme(panel.grid = element_blank(), 
         panel.background = element_rect(fill = "white"),
         axis.line = element_line(color = "black", size = 0.3),
         axis.title = element_text(face = "bold", size = 18),
@@ -122,8 +122,8 @@ p + theme(panel.grid = element_blank(),
   coord_cartesian(ylim = c(30,90))
 
 # make plot 3
-p <- ggplot(data.frame(winningsAsProportion),aes(y = winningsAsProportion, x = 1))
-p + geom_violin(adjust = 1, color = "#235ce1",trim = FALSE, size = 1.5) + 
+p3 <- ggplot(data.frame(winningsAsProportion),aes(y = winningsAsProportion, x = 1))
+p3 + geom_violin(adjust = 1, color = "#235ce1",trim = FALSE, size = 1.5) + 
   geom_jitter(height = .02, width = .03,color = "#235ce1") + 
   ylim(.4,2) + 
   labs(x = "", y = "Total points ratio\n") +
@@ -135,4 +135,3 @@ p + geom_violin(adjust = 1, color = "#235ce1",trim = FALSE, size = 1.5) +
         axis.ticks.x = element_blank(),
         axis.text.x = element_blank()) + 
   geom_hline(yintercept = 1,linetype = "dotted",size = 1)
-
