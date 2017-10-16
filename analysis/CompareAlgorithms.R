@@ -57,7 +57,9 @@ for (i in 1:nParticipants){
   }
   winnings_random[,,i] <- apply(randomTotal, c(1,2), mean)
 }
- 
+
+winningsAsPercentage <- colMeans(colMeans(winnings))/colMeans(colMeans(winnings_random)) * 100
+  
 meanWinnings_random <- rowMeans(colMeans(winnings_random))
 ciWinnings_random <- 1.96 * apply(colMeans(winnings_random),c(1), sd) / sqrt(nParticipants)
 meanWinnings_perfect <- rowMeans(colMeans(winnings_perfect))
@@ -118,3 +120,20 @@ p + theme(panel.grid = element_blank(),
         axis.text = element_text (size = 16)) +
   scale_y_continuous(breaks = c(30, 40, 50, 60, 70, 80), expand = c(0,0)) +
   coord_cartesian(ylim = c(30,90))
+
+# make plot 3
+p <- ggplot(data.frame(winningsAsPercentage),aes(y = winningsAsPercentage, x = 1))
+p + geom_violin(adjust = 1, color = "#235ce1",trim = FALSE, size = 1.5) + 
+  geom_jitter(height = .02, width = .02,color = "#235ce1") + 
+  scale_y_continuous(breaks = c(40,60,80,100,120,140,160,180)) +
+  ylim(35,200) + 
+  labs(x = "", y = "Total points (% of random)\n") +
+  theme(panel.grid = element_blank(), 
+        panel.background = element_rect(fill = "white"),
+        axis.line = element_line(color = "black", size = 0.3),
+        axis.title = element_text(face = "bold", size = 18),
+        axis.text.y = element_text(size = 16),
+        axis.ticks.x = element_blank(),
+        axis.text.x = element_blank()) + 
+  geom_hline(yintercept = 100,linetype = "dotted",size = 1)
+
