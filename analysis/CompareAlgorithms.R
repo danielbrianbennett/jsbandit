@@ -149,7 +149,6 @@ upper.ci.choice.prop.short <- vector(mode = "logical", length = dim(mean.choice.
 boot.fun <- function(data, indices){
   return(mean(d[indices]))
 }
-counter <- 0
 indices <- c(-10:-2, 1:10)
 for (i in 1:length(indices)){
   print(i)
@@ -166,39 +165,92 @@ for (i in 1:length(indices)){
   upper.ci.choice.prop.short[putLoc] = results.95.ci$normal[3]
 }
 choice.prop.short <- data.frame(mean.choice.prop.short, lower.ci.choice.prop.short,upper.ci.choice.prop.short)
+plotLabs <- as.numeric(rownames(choice.prop.short))
+plotLocs <- plotLabs
+plotLocs[plotLocs < 0] <- plotLocs[plotLocs < 0] + 1
+choice.prop.short <- data.frame(plotLocs,plotLabs,mean.choice.prop.short, lower.ci.choice.prop.short,upper.ci.choice.prop.short)
 
 
 # create short plot
-choice.plot.short <- ggplot(choice.prop.short,
-                            aes(x = as.numeric(rownames(choice.prop.short)), y = mean.choice.prop.short)) +
+p4 <- ggplot(choice.prop.short,
+                            aes(x = plotLocs, y = mean.choice.prop.short)) +
   geom_ribbon(aes(ymin = lower.ci.choice.prop.short, ymax = upper.ci.choice.prop.short),
               colour = "gray",fill = "gray", alpha = 0.7) +
   geom_line(size = 2) +
   geom_point(size = 4, shape = 21, fill = "white") +
-  xlim(-10,10) +
-  ylim(0,1) +
-  labs(x = "Change Lag", y = "Oddball Choice Proportion", title = "Oddball Choice Proportion Pre/Post Change") +
-  theme(axis.text = element_text(size = 14), plot.title = element_text(size = 20), axis.title = element_text(size = 16, face = "bold")) + 
-  scale_x_continuous(breaks = c(-10:-1, 1:10))
+  labs(x = "\nChange Lag", y = "Novel Option Choice Proportion\n") +
+  scale_x_continuous(breaks = c(-9, -4, 0.5, 5, 10), labels = c(-10, -5, 0, 5, 10)) +
+  scale_y_continuous(expand = c(0,0), limits = c(0,0.5)) +
+  theme(panel.grid = element_blank(), 
+        panel.background = element_rect(fill = "white"), 
+        axis.line = element_line(color = "black", size = 0.3),
+        axis.title = element_text(face = "bold", size = 18),
+        axis.text = element_text (size = 16),
+        legend.title = element_blank(),
+        legend.text = element_text(size = 16))
 
 
 # build short plot
-choice.plot.short
+p4
 
-# create long plot
-choice.plot.long <- ggplot(choice.prop.long,
-                           aes(x = as.numeric(rownames(choice.prop.long)), y = mean.choice.prop.long)) +
-  geom_ribbon(aes(ymin = pmax(0, mean.choice.prop.long - sd.choice.prop.long), ymax = pmin(mean.choice.prop.long + sd.choice.prop.long,1)),
+# get mean and sd choice proportion by lag number and block number
+choice.by.lag.short <- aggregate(proximal.data$filledChosen, by = list(proximal.data$changeLag, proximal.data$block, proximal.data$ID), FUN = mean)
+mean.choice.prop.short <- matrix(data = NA, nrow = 3, ncol = 20)
+lower.ci.choice.prop.short <- matrix(data = NA, nrow = 3, ncol = 20)
+upper.ci.choice.prop.short <- matrix(data = NA, nrow = 3, ncol = 20)
+
+boot.fun <- function(data, indices){
+  return(mean(d[indices]))
+}
+indices <- c(-10:-2, 1:10)
+
+for (j in 1:3){
+  temp.data <- subset(choice.by.lag.short, choice.by.lag.short$Group.2 == j)
+  mean.choice.prop.short[j,] <- tapply(temp.data$x, temp.data$Group.1, FUN = mean)
+  
+  for (i in 1:length(indices)){
+    print(i)
+    d <- temp.data[temp.data$Group.1 == indices[i],]$x
+    results <-  boot(data = d,statistic = boot.fun, R = 1000)
+    results.95.ci <- boot.ci(results)
+    if (indices[i] > -2){
+      putLoc <- i + 1
+    } else{
+      putLoc <- i
+    }
+    
+    lower.ci.choice.prop.short[j,putLoc] = results.95.ci$normal[2]
+    upper.ci.choice.prop.short[j,putLoc] = results.95.ci$normal[3]
+  }
+}
+
+mean.choice.prop.short <- c(mean.choice.prop.short[1,],mean.choice.prop.short[2,],mean.choice.prop.short[1,],mean.choice.prop.short[3,])
+
+choice.prop.short <- data.frame(mean.choice.prop.short, lower.ci.choice.prop.short,upper.ci.choice.prop.short)
+plotLabs <- as.numeric(rownames(choice.prop.short))
+plotLocs <- plotLabs
+plotLocs[plotLocs < 0] <- plotLocs[plotLocs < 0] + 1
+choice.prop.short <- data.frame(plotLocs,plotLabs,mean.choice.prop.short, lower.ci.choice.prop.short,upper.ci.choice.prop.short)
+
+
+# create short plot
+p4 <- ggplot(choice.prop.short,
+             aes(x = plotLocs, y = mean.choice.prop.short)) +
+  geom_ribbon(aes(ymin = lower.ci.choice.prop.short, ymax = upper.ci.choice.prop.short),
               colour = "gray",fill = "gray", alpha = 0.7) +
   geom_line(size = 2) +
   geom_point(size = 4, shape = 21, fill = "white") +
-  xlim(-5,7) +
-  ylim(0,1) +
-  labs(x = "Change Lag", y = "Oddball Choice Proportion", title = "Oddball Choice Proportion Pre/Post Change") +
-  theme(axis.text = element_text(size = 14), plot.title = element_text(size = 20), axis.title = element_text(size = 16, face = "bold")) + 
-  scale_x_continuous(breaks = c(-5:-1, 1:7))
+  labs(x = "\nChange Lag", y = "Novel Option Choice Proportion\n") +
+  scale_x_continuous(breaks = c(-9, -4, 0.5, 5, 10), labels = c(-10, -5, 0, 5, 10)) +
+  scale_y_continuous(expand = c(0,0), limits = c(0,0.5)) +
+  theme(panel.grid = element_blank(), 
+        panel.background = element_rect(fill = "white"), 
+        axis.line = element_line(color = "black", size = 0.3),
+        axis.title = element_text(face = "bold", size = 18),
+        axis.text = element_text (size = 16),
+        legend.title = element_blank(),
+        legend.text = element_text(size = 16))
 
 
-# build long plot
-choice.plot.long
-
+# build short plot
+p5
