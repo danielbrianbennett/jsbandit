@@ -1,5 +1,6 @@
 # load relevant packages
 library(ggplot2)
+library(boot)
 
 # clear workspace
 rm(list = ls())
@@ -92,7 +93,8 @@ p1 + scale_color_manual(values = cols) +
         axis.title = element_text(face = "bold", size = 18),
         axis.text = element_text (size = 16),
         legend.title = element_blank(),
-        legend.text = element_text(size = 16)) +
+        legend.text = element_text(size = 16),
+        legend.position = c(.9, .1)) +
   scale_x_continuous(breaks = c(5,10,15,20,25,30), expand = c(0,0), limits = c(0,30)) +
   scale_y_continuous(breaks = c(30, 40, 50, 60, 70, 80), expand = c(0,0), limits = c(30,90))
 
@@ -177,7 +179,7 @@ p4 <- ggplot(choice.prop.short,
   geom_ribbon(aes(ymin = lower.ci.choice.prop.short, ymax = upper.ci.choice.prop.short),
               colour = "gray",fill = "gray", alpha = 0.7) +
   geom_line(size = 2) +
-  geom_point(size = 4, shape = 21, fill = "white") +
+  geom_point(size = 2.5, shape = 21, fill = "white") +
   labs(x = "\nChange Lag", y = "Novel Option Choice Proportion\n") +
   scale_x_continuous(breaks = c(-9, -4, 0.5, 5, 10), labels = c(-10, -5, 0, 5, 10)) +
   scale_y_continuous(expand = c(0,0), limits = c(0,0.5)) +
@@ -195,9 +197,9 @@ p4
 
 # get mean and sd choice proportion by lag number and block number
 choice.by.lag.short <- aggregate(proximal.data$filledChosen, by = list(proximal.data$changeLag, proximal.data$block, proximal.data$ID), FUN = mean)
-mean.choice.prop.short <- matrix(data = NA, nrow = 3, ncol = 20)
-lower.ci.choice.prop.short <- matrix(data = NA, nrow = 3, ncol = 20)
-upper.ci.choice.prop.short <- matrix(data = NA, nrow = 3, ncol = 20)
+mean.choice.prop.short <- matrix(data = 0, nrow = 3, ncol = 20)
+lower.ci.choice.prop.short <- matrix(data = 0, nrow = 3, ncol = 20)
+upper.ci.choice.prop.short <- matrix(data = 0, nrow = 3, ncol = 20)
 
 boot.fun <- function(data, indices){
   return(mean(d[indices]))
@@ -224,22 +226,25 @@ for (j in 1:3){
   }
 }
 
-mean.choice.prop.short <- c(mean.choice.prop.short[1,],mean.choice.prop.short[2,],mean.choice.prop.short[1,],mean.choice.prop.short[3,])
+mean.choice.prop.short <- c(mean.choice.prop.short[1,],mean.choice.prop.short[2,],mean.choice.prop.short[3,])
+lower.ci.choice.prop.short <-  c(lower.ci.choice.prop.short[1,],lower.ci.choice.prop.short[2,],lower.ci.choice.prop.short[3,])
+upper.ci.choice.prop.short <-  c(upper.ci.choice.prop.short[1,],upper.ci.choice.prop.short[2,],upper.ci.choice.prop.short[3,])
+block.number <- c(rep(1,20), rep(2,20),rep(3,20))
 
-choice.prop.short <- data.frame(mean.choice.prop.short, lower.ci.choice.prop.short,upper.ci.choice.prop.short)
-plotLabs <- as.numeric(rownames(choice.prop.short))
+choice.prop.short <- data.frame(mean.choice.prop.short, lower.ci.choice.prop.short,upper.ci.choice.prop.short,block.number)
+plotLabs <- rep(c(-10:-1,1:10),3)
 plotLocs <- plotLabs
 plotLocs[plotLocs < 0] <- plotLocs[plotLocs < 0] + 1
-choice.prop.short <- data.frame(plotLocs,plotLabs,mean.choice.prop.short, lower.ci.choice.prop.short,upper.ci.choice.prop.short)
-
 
 # create short plot
-p4 <- ggplot(choice.prop.short,
-             aes(x = plotLocs, y = mean.choice.prop.short)) +
-  geom_ribbon(aes(ymin = lower.ci.choice.prop.short, ymax = upper.ci.choice.prop.short),
-              colour = "gray",fill = "gray", alpha = 0.7) +
+cols <- c("1" = "#003e7d", "2" = "#0059b3", "3" = "#b2cde8")
+
+p5 <- ggplot(choice.prop.short,
+             aes(x = plotLocs, y = mean.choice.prop.short, colour = factor(block.number))) +
+  # geom_ribbon(aes(ymin = lower.ci.choice.prop.short, ymax = upper.ci.choice.prop.short, group = block.number),
+  #             colour = "gray",fill = "gray", alpha = 0.3) +
   geom_line(size = 2) +
-  geom_point(size = 4, shape = 21, fill = "white") +
+  geom_point(size = 2.5, shape = 21, fill = "white") +
   labs(x = "\nChange Lag", y = "Novel Option Choice Proportion\n") +
   scale_x_continuous(breaks = c(-9, -4, 0.5, 5, 10), labels = c(-10, -5, 0, 5, 10)) +
   scale_y_continuous(expand = c(0,0), limits = c(0,0.5)) +
@@ -248,9 +253,10 @@ p4 <- ggplot(choice.prop.short,
         axis.line = element_line(color = "black", size = 0.3),
         axis.title = element_text(face = "bold", size = 18),
         axis.text = element_text (size = 16),
-        legend.title = element_blank(),
-        legend.text = element_text(size = 16))
+        legend.text = element_text(size = 16),
+        legend.title = element_text(size = 16),
+        legend.position = c(.8, .8))
 
 
 # build short plot
-p5
+p5 + scale_color_manual(name = "Block",values = cols) + guides(colour = guide_legend(override.aees = list(size = 0)))
