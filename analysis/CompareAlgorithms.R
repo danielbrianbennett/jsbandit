@@ -95,7 +95,7 @@ p1 + scale_color_manual(values = cols) +
         legend.title = element_blank(),
         legend.text = element_text(size = 16),
         legend.position = c(.9, .1)) +
-  scale_x_continuous(breaks = c(5,10,15,20,25,30), expand = c(0,0), limits = c(0,30)) +
+  scale_x_continuous(breaks = c(5,10,15,20,25,30), expand = c(0,0), limits = c(0,31)) +
   scale_y_continuous(breaks = c(30, 40, 50, 60, 70, 80), expand = c(0,0), limits = c(30,90))
 
 
@@ -128,7 +128,7 @@ p3 <- ggplot(data.frame(winningsAsProportion),aes(y = winningsAsProportion, x = 
 p3 + geom_violin(adjust = 1, color = "#235ce1",trim = FALSE, size = 1.5) + 
   geom_jitter(height = .02, width = .03,color = "#235ce1") + 
   ylim(.4,2) + 
-  labs(x = "", y = "Total points ratio\n") +
+  labs(x = "\n", y = "Total points ratio\n") +
   theme(panel.grid = element_blank(), 
         panel.background = element_rect(fill = "white"),
         axis.line = element_line(color = "black", size = 0.3),
