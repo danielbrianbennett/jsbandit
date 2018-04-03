@@ -1,17 +1,3 @@
-    library(mvtnorm)
-
-source(here::here("helper","HelperFunctions.R"))
-A <- CalculateA()
-allData <- ExtractData(here::here("raw_data","banditData_v2point2.Rdata"))
-pID <- 90
-
-data <- list("block" = allData$block[pID,],
-               "trial" = allData$trial[pID,],
-               "whichFilled" = allData$whichFilled[pID,],
-               "outcome" = allData$outcome[pID,],
-               "choice" = allData$choice[pID,],
-               "changeLag" = allData$changeLag[pID,])
-
 likelihood <- function(data,model){
     
     # set constants
@@ -56,7 +42,7 @@ likelihood <- function(data,model){
         }
         
         # update bandit variance
-        banditVariance <- (1 - (deltaFunction * kalmanGain)) * (banditVariance + (model$pars$zeta^2))
+        banditVariance <- (1 - (chosenIndicator * kalmanGain)) * (banditVariance + (model$pars$zeta^2))
         
     }
     
