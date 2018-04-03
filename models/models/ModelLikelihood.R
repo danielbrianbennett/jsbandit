@@ -1,16 +1,16 @@
-library(mvtnorm)
+    library(mvtnorm)
 
 source(here::here("helper","HelperFunctions.R"))
 A <- CalculateA()
 allData <- ExtractData(here::here("raw_data","banditData_v2point2.Rdata"))
-pID <- 1
+pID <- 90
 
-data <- list("block" = allData$block[1,],
-               "trial" = allData$trial[1,],
-               "whichFilled" = allData$whichFilled[1,],
-               "outcome" = allData$outcome[1,],
-               "choice" = allData$choice[1,],
-               "changeLag" = allData$changeLag[1,])
+data <- list("block" = allData$block[pID,],
+               "trial" = allData$trial[pID,],
+               "whichFilled" = allData$whichFilled[pID,],
+               "outcome" = allData$outcome[pID,],
+               "choice" = allData$choice[pID,],
+               "changeLag" = allData$changeLag[pID,])
 
 likelihood <- function(data,model){
     
@@ -36,7 +36,7 @@ likelihood <- function(data,model){
         for (j in 1:nBandits){
             M = A[,,j] %*% banditMean
             H = A[,,j] %*% diag(banditVariance + (model$pars$epsilon^2)) %*% t(A[,,j])
-            allChoiceProb[j,i] <- pmvnorm(lower= 0,mean = as.vector(M), sigma = H)[1]
+            allChoiceProb[j,i] <- pmvnorm(lower= 0,mean = as.vector(M), sigma = H, algorithm = TVPACK())[1]
         }
         choiceProb[i] <- allChoiceProb[data$choice[i],i]
         
@@ -50,10 +50,16 @@ likelihood <- function(data,model){
         # update bandit means
         banditMean <- banditMean + (chosenIndicator * kalmanGain * (data$outcome[i] - banditMean))
         
+        # append bonus to bandit mean
+        if (!(is.na(bonus[i]))){
+            banditMean <- banditMean + bonus[i]
+        }
+        
         # update bandit variance
         banditVariance <- (1 - (deltaFunction * kalmanGain)) * (banditVariance + (model$pars$zeta^2))
         
     }
     
-    return(sum(-log(choiceProb)))
+    return(list("negLL" = sum(-log(choiceProb)),
+                "choiceProb" = choiceProb))
 }
