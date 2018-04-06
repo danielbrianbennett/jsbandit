@@ -9,7 +9,7 @@ source(here::here("models","ModelLikelihood.R"))
 
 A <- CalculateA()
 allData <- ExtractData(here::here("raw_data","banditData_v2point2.Rdata"))
-pID <- 4
+pID <- 15
 
 data <- list("block" = allData$block[pID,],
              "trial" = allData$trial[pID,],
@@ -29,8 +29,8 @@ model_KS <- list("pars" = list("zeta" = NA,
                                "B" = NA,
                                "j" = NA,
                                "k" = NA),
-                 "lowerBound" = c(0,0,-100,-Inf,-Inf),
-                 "upperBound" = c(100,100,100,Inf,Inf),
+                 "lowerBound" =  c(-100,-Inf,-Inf),#c(0,0,-100,-Inf,-Inf),
+                 "upperBound" = c(100,Inf,Inf),#c(100,100,100,Inf,Inf),
                  "lambda" = function(zeta,epsilon,B,j,k,V_init,var_init){
                      model$pars$zeta <- zeta
                      model$pars$epsilon <- epsilon
@@ -43,12 +43,14 @@ model_KS <- list("pars" = list("zeta" = NA,
                      return(ll$negLL)
                  },
                  "startPoints" = function(nStarts = 1){
-                     return(list("zeta" = runif(nStarts, min = 0, max = 10),
-                                 "epsilon" = runif(nStarts, min = 0, max = 10),
+                     return(list(#"zeta" = runif(nStarts, min = 0, max = 10),
+                                 # "epsilon" = runif(nStarts, min = 0, max = 10),
                                  "B" = rnorm(nStarts, mean = 0, sd = 20),
                                  "j" = rnorm(nStarts, mean = 0, sd = 1),
                                  "k" = rnorm(nStarts, mean = 0, sd = 1)))},
-                 "fixed" = list("V_init" = V_init_constant,
+                 "fixed" = list("zeta" = 8,
+                                "epsilon" = 3,
+                                "V_init" = V_init_constant,
                                 "var_init" = var_init_constant)
 )
 

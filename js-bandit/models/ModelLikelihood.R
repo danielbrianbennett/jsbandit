@@ -22,12 +22,20 @@ likelihood <- function(data,model){
             }
             
             # calculate choice probabilities
-            for (j in 1:nBandits){
+            for (j in 1:(nBandits-1)){
                 M = A[,,j] %*% banditMean
                 H = A[,,j] %*% diag(banditVariance + (model$pars$epsilon^2)) %*% t(A[,,j])
                 allChoiceProb[j,i] <- pmvnorm(lower= 0,mean = as.vector(M), sigma = H, algorithm = TVPACK())[1]
             }
+            allChoiceProb[nBandits,i] <- max(realMin,1 - sum(allChoiceProb[1:(nBandits-1),i]))
             choiceProb[i] <- allChoiceProb[data$choice[i],i]
+            
+            # for (j in 1:(nBandits)){
+            #     M = A[,,j] %*% banditMean
+            #     H = A[,,j] %*% diag(banditVariance + (model$pars$epsilon^2)) %*% t(A[,,j])
+            #     allChoiceProb[j,i] <- pmvnorm(lower= 0,mean = as.vector(M), sigma = H, algorithm = TVPACK())[1]
+            # }
+            # choiceProb[i] <- allChoiceProb[data$choice[i],i]
             
             # index chosen option and changed option
             chosenIndicator <- 1 * (1:nBandits == data$choice[i])
