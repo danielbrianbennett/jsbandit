@@ -1,6 +1,7 @@
 #### Preliminaries ####
 
 libLoc <- "/jukebox/niv/Dan/Rpackages"
+projDir <- "/jukebox/niv/Dan/Rprojects/js-bandit"
 
 require(mvtnorm, lib.loc = libLoc)
 require(stats4, lib.loc = libLoc)
@@ -9,8 +10,10 @@ require(iterators, lib.loc = libLoc)
 require(foreach, lib.loc = libLoc)
 require(doParallel, lib.loc = libLoc)
 
-source(here::here("helper","HelperFunctions.R"))
-source(here::here("models","ModelLikelihood.R"))
+
+source(paste(projDir,"helper","HelperFunctions.R", sep = "/"))
+source(paste(projDir,"models","ModelLikelihood.R", sep = "/"))
+
 
 # specify truncated cauchy 
 r_tcauchy <- function(nStarts=1,location,scale,bound){
@@ -28,8 +31,9 @@ d_tcauchy <- function(vals,location,scale,bound){
 }
 
 A <- CalculateA()
-allData <- ExtractData(here::here("raw_data","banditData_v2point2.Rdata"))
-nSamples <- 100
+allData <- ExtractData(paste(projDir,"raw_data","banditData_v2point2.Rdata", sep = "/"))
+
+nSamples <- 200
 
 
 cl <- makeCluster(parallel::detectCores(), type = "FORK")
@@ -90,6 +94,7 @@ model <- model_KS
 
 LL <- matrix(nrow = dim(allData$whichFilled)[1], ncol = nSamples)
 allPars <- list()
+parWeights <- list()
 for (pID in 1:dim(allData$whichFilled)[1]){
     data <- list("block" = allData$block[pID,],
                  "trial" = allData$trial[pID,],
