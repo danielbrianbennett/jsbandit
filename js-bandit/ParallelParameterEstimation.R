@@ -31,9 +31,9 @@ d_tcauchy <- function(vals,location,scale,bound){
 }
 
 A <- CalculateA()
-allData <- ExtractData(paste(projDir,"raw_data","banditData_v2point2.Rdata", sep = "/"))
+allData <- ExtractData(paste(projDir,"raw_data","banditData_v2point2.RData", sep = "/"))
 
-nSamples <- 200
+nSamples <- 1000
 
 
 cl <- makeCluster(parallel::detectCores(), type = "FORK")
