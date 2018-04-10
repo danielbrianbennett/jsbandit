@@ -3,6 +3,7 @@
 libLoc <- "/jukebox/niv/Dan/Rpackages"
 projDir <- "/jukebox/niv/Dan/Rprojects/js-bandit"
 
+library(mvtnorm)
 require(mvtnorm, lib.loc = libLoc)
 require(stats4, lib.loc = libLoc)
 require(tictoc, lib.loc = libLoc)
@@ -33,8 +34,8 @@ d_tcauchy <- function(vals,location,scale,bound){
 A <- CalculateA()
 allData <- ExtractData(paste(projDir,"raw_data","banditData_v2point2.RData", sep = "/"))
 
-nSamples <- 1000
-
+nSamples <- 10001
+print(nSamples)
 
 cl <- makeCluster(parallel::detectCores(), type = "FORK")
 registerDoParallel(cl)
@@ -95,6 +96,7 @@ model <- model_KS
 LL <- matrix(nrow = dim(allData$whichFilled)[1], ncol = nSamples)
 allPars <- list()
 parWeights <- list()
+impWeight <- list()
 for (pID in 1:dim(allData$whichFilled)[1]){
     data <- list("block" = allData$block[pID,],
                  "trial" = allData$trial[pID,],
@@ -121,14 +123,15 @@ for (pID in 1:dim(allData$whichFilled)[1]){
     toc()
     
     # calculate likelihood
-    p_x <- (1/LL[pID])
+    p_x <- (1/LL[pID,])
     
     # calculate importance weights for parameter
     q_x <- parWeights[[pID]]$B
-    impWeight <- (p_x/q_x) / sum((p_x/q_x),na.rm=TRUE)
+    impWeight[[pID]] <- (p_x/q_x) / sum((p_x/q_x),na.rm=TRUE)
     
-    hist(sample(allPars[[pID]]$B, size = 100000, replace = TRUE, prob = impWeight[!is.na(impWeight)]),100,col="gray")
-    print(sum(allPars[[pID]]$B * impWeight))
+    # hist(sample(allPars[[pID]]$B, size = 100000, replace = TRUE, prob = impWeight[!is.na(impWeight)]),100,col="gray")
+    print(pID)
+    print(sum(allPars[[pID]]$B * impWeight[[pID]]))
 }
 
 stopCluster(cl)

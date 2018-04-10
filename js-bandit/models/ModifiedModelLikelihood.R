@@ -1,5 +1,6 @@
 likelihood <- function(data,model){
-
+    
+    tic() 
     # set constants
     nBandits <- 4
     realMin <- 1e-50
@@ -9,11 +10,11 @@ likelihood <- function(data,model){
     choiceProb <- rep(realMin, times = length(data$block))        
     
     tryCatch({
-
+        
         # calculate bonus amount
         bonus <- CalculateBonus(data$block,data$changeLag,model$pars$B,model$pars$k,model$pars$j)
         
-        for (i in 1:length(data$trial)){
+        for (i in 1:48){#length(data$trial)){
             
             # re-initialise means on first trial of block
             if (data$trial[i] == 1){
@@ -51,11 +52,13 @@ likelihood <- function(data,model){
             
             # append bonus to bandit mean
             if (!(is.na(bonus[i]))){
-                banditMean <- banditMean + (changedIndicator * bonus[i])
+                banditMean <- banditMean + bonus[i]
             }
-
+            
             # update bandit variance
             banditVariance <- (1 - (chosenIndicator * kalmanGain)) * (banditVariance + (model$pars$zeta^2))
+            print(banditMean)
+            print(i)
             
         }
         
@@ -67,7 +70,7 @@ likelihood <- function(data,model){
             choiceProb[choiceProb == 0] <- realMin
         }    
     }, error = function(e){print(e)})
-
+    toc()
     return(list("negLL" = sum(-log(choiceProb)),
                 "choiceProb" = choiceProb))
 }
