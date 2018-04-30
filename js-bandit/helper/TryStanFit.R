@@ -6,7 +6,7 @@ source(here("helper","StanHelperFunctions.R"))
 source(here("models","ModelLikelihood.R"))
 
 stanData <- ExtractDataForStan(here("raw_data","banditData_v2point2.Rdata"))
-
+stanData$V_init <- 100
 
 # list parameters to estimate in stan
 parameters <- c("beta",

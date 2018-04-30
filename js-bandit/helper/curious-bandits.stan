@@ -18,10 +18,9 @@ data {
 parameters {
     
     // Group-level parameters
-    vector[4] mu_pr;
-    vector<lower=0>[4] sigma; 
-    real<lower=0> sigma_m;
-    
+    vector[5] mu_pr;
+    vector<lower=0>[5] sigma; 
+
     // Subject-level parameters
     vector[N] beta_pr;          // Inverse temperature
     vector[N] eta_pr;           // Learning rate
@@ -81,8 +80,8 @@ model {
         // update values based on observed outcome
         V[choice[i]] = V[choice[i]] + eta[participant_ix[i]] * ( outcome[i] - V[choice[i]]);
         
-        // likelihood
-        choiceProb = exp(beta[i] * V) / sum(exp(beta[i] * V));
+        // likelihood with stabilised softmax
+        choiceProb = exp((beta[participant_ix[i]] * V) - max(beta[participant_ix[i]] * V)) / sum(exp((beta[participant_ix[i]] * V) - max(beta[participant_ix[i]] * V)));
         choice[i] ~ categorical(choiceProb);
         
     }
