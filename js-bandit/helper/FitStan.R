@@ -25,7 +25,10 @@ parameters <- c("mu_beta",
                 "eta_pr",
                 "B_pr",
                 "j_pr",
-                "k_pr"
+                "k_pr",
+                "sigma_B",
+                "sigma_j",
+                "sigma_k"
 ) 
 
 initVals = list(list(mu_pr = rep(0,5),
@@ -68,10 +71,10 @@ samples <- stan(file = stanFile,
                 data = stanData,
                 init = initVals,
                 pars=parameters,
-                iter=1250, 
+                iter=1500, 
                 chains=4, 
                 thin=1,
-                warmup = 750  # Default = iter/2
+                warmup = 1000  # Default = iter/2
                 # seed = 123  # Setting seed; Default is random seed
 )
 toc()
