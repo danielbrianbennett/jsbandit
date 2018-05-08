@@ -3,8 +3,9 @@ require(here)
 require(tictoc)
 
 source(here("helper","StanHelperFunctions.R"))
+source(here("models","ModelLikelihood.R"))
 
-stanData <- ExtractDataForStan(here("raw_data","banditData_v3.Rdata"))
+stanData <- ExtractDataForStan(here("raw_data","banditData_v2point2.Rdata"))
 stanData$V_init <- 50
 
 # list parameters to estimate in stan
@@ -63,7 +64,7 @@ initVals = list(list(mu_pr = rep(0,5),
 rstan_options(auto_write = TRUE)
 options(mc.cores = parallel::detectCores())
 
-stanFile = here("models","curious-bandits-delta.stan")
+stanFile = here("helper","curious-bandits.stan")
 # Call stan 
 tic()
 samples <- stan(file = stanFile,   
@@ -77,5 +78,3 @@ samples <- stan(file = stanFile,
                 # seed = 123  # Setting seed; Default is random seed
 )
 toc()
-
-save(samples, file = here("models","samples", "delta_v3.Rdata"))
