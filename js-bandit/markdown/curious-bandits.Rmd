@@ -1,0 +1,179 @@
+---
+title: "curious-bandits"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+require(here)
+require(rstan)
+```
+
+# Curious Bandits parameter estimation
+
+For each of the three experiments, we estimated the size of the bonus $B$ associated with novelty, as well as the rate at which this bonus decayed over time across blocks ($j$) and within blocks ($k$):
+
+$$ \text{Effective bonus = } B \cdot block^{ \textit{ j}} \cdot trial^{\textit{ k}}$$
+
+Where $trial$ refers to the number of trials that have passed since the visual change within a block, not the absolute trial number.
+
+The parameter estimates for these quantities below are based on delta-rule value learning and a softmax choice rule, under the assumption that the group-level hyperpriors from which subject-level parameters were drawn were Gaussian. Parameters were estimated using models coded up in Stan. Specifically, there were 4 chains that each made 1000 warm-up iterations before taking 500 samples from the joint posterior, for a total of 2000 samples. In each case, the diagnostics indicated that the chains had converged satisfactorily (R_hat values < 1.1).
+
+## Experiment 1
+
+In Experiment 1, the visual change was that in each block, the fill colour of one of the four choice options changed from white to grey, and stayed that way until the end of the block.
+
+First of all, we can check the chains to make sure they seem to be mixing properly:
+
+```{r exp1, out.width='\\textwidth'}
+
+# load samples 
+load(here("models","samples","delta_v2.Rdata"))
+
+# extract samples of interest
+bonusSamples <- extract(samples, pars = c("mu_B","mu_j","mu_k","sigma_B","sigma_j","sigma_k"))
+
+# view traceplots for samples corresponding to mu and sigma of B, j, and k
+traceplot(samples, pars = c("mu_B","mu_j","mu_k","sigma_B","sigma_j","sigma_k"))
+
+```
+
+Next, we can visualise the size of the value bonus $B$ and the size of the block- and trial-wise decay factors $j$ and $k$. The way I have done this here is to visualise the hyperprior specified by the posterior mean of each of the parameters. Perhaps there's a better way to do this?
+
+```{r exp1 posterior bonus}
+
+# calculate posterior mean for each of the parameters of interest
+postMean <- lapply(bonusSamples, FUN = mean)
+
+# visualise samples from bonus distribution
+x <- seq(-100,100,length = 1000)
+y_e1 <- dnorm(x, mean = postMean$mu_B, sd = postMean$sigma_B)
+plot(x, y_e1, type = "l", lwd = 2, xlab = "Bonus size", ylab = "Parameter density", main = "Hyperprior for bonus size")
+```
+
+This looks pretty sensible -- on average, the bonus is positive, and may be quite large, but for some participants it may also be zero or negative.
+
+```{r exp1 posterior decay}
+# visualise samples from decay factor distributions
+x <- seq(-50,50,length = 1000)
+y1_e1 <- dnorm(x, mean = postMean$mu_k, sd = postMean$sigma_k)
+y2_e1 <- dnorm(x, mean = postMean$mu_j, sd = postMean$sigma_j)
+plot(x, y1_e1, type = "l", lwd = 2, xlab = "Size of decay factor", ylab = "Parameter density", main = "Hyperprior for decay factors")
+lines(x, y2_e1, type = "l", lwd = 2, lty = "dashed")
+legend(x = "topright", lty = c("solid","dashed"), lwd = c(2,2), legend = c("Trial-wise","Block-wise"), bty = "n")
+```
+
+These parameter values are also fairly sensible in light of the aggregate behavioural data: the bonus size decays quickly within a block, but relatively more slowly across blocks.
+
+## Experiment 2
+
+We can plot the same quantities for Experiment 2, which was the same as Exp 1 with the exception that the fill colour was different in each of the three blocks. What is striking about the graphs below is how consistent they are with parameter estimates from Exp. 1.  
+
+Chains:
+
+```{r exp2, out.width='\\textwidth'}
+
+# load samples
+load(here("models","samples","delta_v3.Rdata"))
+
+# extract samples of interest
+bonusSamples <- extract(samples, pars = c("mu_B","mu_j","mu_k","sigma_B","sigma_j","sigma_k"))
+
+# view traceplots for samples corresponding to mu and sigma of B, j, and k
+traceplot(samples, pars = c("mu_B","mu_j","mu_k","sigma_B","sigma_j","sigma_k"))
+
+```
+
+Bonus size (in purple, relative to Exp 1 in black):
+
+```{r exp2 posterior bonus}
+
+# calculate posterior mean for each of the parameters of interest
+postMean <- lapply(bonusSamples, FUN = mean)
+
+# visualise samples from bonus distribution
+x <- seq(-100,100,length = 1000)
+y_e2 <- dnorm(x, mean = postMean$mu_B, sd = postMean$sigma_B)
+plot(x, y_e2, type = "l", col = "#9f7ebd", lwd = 2, xlab = "Bonus size", ylab = "Parameter density", main = "Hyperpriors for bonus size")
+lines(x, y_e1, type = "l", lwd = 2, lty = "solid")
+legend(x = "topleft", col = c("#9f7ebd","#000000"), lty = c("solid","solid"), legend = c("Bonus size (Exp. 2)","Bonus size (Exp. 1)"), bty = "n", lwd = c(2,2))
+
+```
+
+And decay weights:
+
+```{r exp2 posterior decay}
+# visualise samples from decay factor distributions
+x <- seq(-50,50,length = 1000)
+y1_e2 <- dnorm(x, mean = postMean$mu_k, sd = postMean$sigma_k)
+y2_e2 <- dnorm(x, mean = postMean$mu_j, sd = postMean$sigma_j)
+plot(x, y1_e2, type = "l", lwd = 2, col = "#9f7ebd", xlab = "Size of decay factor", ylab = "Parameter density", main = "Hyperpriors for decay factors")
+lines(x, y2_e2, type = "l", lwd = 2, col = "#9f7ebd", lty = "dashed")
+lines(x, y1_e1, type = "l", lwd = 2)
+lines(x, y2_e1, type = "l", lwd = 2, lty = "dashed")
+legend(x = "topright", col = c("#9f7ebd","#9f7ebd","#000000","#000000"), lty = c("solid","dashed","solid","dashed"), legend = c("Trial-wise (Exp. 2)","Block-wise (Exp. 2)","Trial-wise (Exp. 1)","Block-wise (Exp. 1)"), bty = "n", lwd = c(2,2,2,2))
+```
+
+## Experiment 3
+
+Lastly we can look at parameter estimates from Experiment 3. Experiment 3 had a between-subjects manipulation, in which the event that occurred during learning was that one of the four choice options was associated with a semantic tag: either "good","bad", or "????". We can then estimate the bonus sizes and decay parameters separately for each of those three conditions.
+
+Here are the sample traceplots for all 9 parameters (3 conditions x {B, j, k}):
+
+```{r exp3, out.width='\\textwidth'}
+
+# load samples
+load(here("models","samples","delta_v4.Rdata"))
+
+# extract samples of interest
+bonusSamples <- extract(samples, pars = c("mu_B_g","mu_j_g","mu_k_g","sigma_B_g","sigma_j_g","sigma_k_g","mu_B_b","mu_j_b","mu_k_b","sigma_B_b","sigma_j_b","sigma_k_b","mu_B_q","mu_j_q","mu_k_q","sigma_B_q","sigma_j_q","sigma_k_q"))
+
+# view traceplots for samples corresponding to mu and sigma of B, j, and k
+traceplot(samples, pars = c("mu_B_g","mu_j_g","mu_k_g","sigma_B_g","sigma_j_g","sigma_k_g","mu_B_b","mu_j_b","mu_k_b","sigma_B_b","sigma_j_b","sigma_k_b","mu_B_q","mu_j_q","mu_k_q","sigma_B_q","sigma_j_q","sigma_k_q"))
+
+```
+
+Next, the different estimated bonus sizes:
+
+```{r exp3 posterior bonus}
+
+# calculate posterior mean for each of the parameters of interest
+postMean <- lapply(bonusSamples, FUN = mean)
+
+# visualise samples from bonus distribution
+x <- seq(-100,150,length = 1000)
+y_g <- dnorm(x, mean = postMean$mu_B_g, sd = postMean$sigma_B_g)
+y_b <- dnorm(x, mean = postMean$mu_B_b, sd = postMean$sigma_B_b)
+y_q <- dnorm(x, mean = postMean$mu_B_q, sd = postMean$sigma_B_q)
+plot(x, y_g, type = "l", col = "#03a734", lwd = 2, xlab = "Bonus size", ylab = "Parameter density", main = "Hyperpriors for bonus size", xlim = c(-100,150), ylim = c(0, 0.03))
+lines(x, y_b, type = "l", lwd = 2, lty = "solid", col = "#c00329")
+lines(x, y_q, type = "l", lwd = 2, lty = "solid", col = "#4477b2")
+
+legend(x = "topright", col = c("#03a734","#c00329", "#4477b2"), legend = c("Bonus size - 'good'","Bonus size - 'bad'","Bonus size - '????'"), bty = "n", lwd = c(2,2,2))
+
+```
+
+And the different decay factors:
+
+```{r exp3 posterior decay}
+
+# calculate posterior mean for each of the parameters of interest
+postMean <- lapply(bonusSamples, FUN = mean)
+
+# visualise samples from bonus distribution
+x <- seq(-50,50,length = 1000)
+y_g1 <- dnorm(x, mean = postMean$mu_j_g, sd = postMean$sigma_j_g)
+y_b1 <- dnorm(x, mean = postMean$mu_j_b, sd = postMean$sigma_j_b)
+y_q1 <- dnorm(x, mean = postMean$mu_j_q, sd = postMean$sigma_j_q)
+y_g2 <- dnorm(x, mean = postMean$mu_k_g, sd = postMean$sigma_k_g)
+y_b2 <- dnorm(x, mean = postMean$mu_k_b, sd = postMean$sigma_k_b)
+y_q2 <- dnorm(x, mean = postMean$mu_k_q, sd = postMean$sigma_k_q)
+plot(x, y_g2, type = "l", col = "#03a734", lwd = 2, xlab = "Bonus size", ylab = "Parameter density", main = "Hyperpriors for decay factor", xlim = c(-50,50), ylim = c(0, 0.5))
+lines(x, y_b2, type = "l", lwd = 2, lty = "solid", col = "#c00329")
+lines(x, y_q2, type = "l", lwd = 2, lty = "solid", col = "#4477b2")
+lines(x, y_g1, type = "l", lwd = 2, lty = "dashed", col = "#03a734")
+lines(x, y_b1, type = "l", lwd = 2, lty = "dashed", col = "#c00329")
+lines(x, y_q1, type = "l", lwd = 2, lty = "dashed", col = "#4477b2")
+legend(x = "topright", col = c("#03a734","#c00329", "#4477b2","#03a734","#c00329", "#4477b2"), legend = c("Block-wise decay - 'good'","Block-wise decay - 'bad'","Block-wise decay - '????'","Trial-wise decay - 'good'","Trial-wise decay - 'bad'","Trial-wise decay - '????'"), bty = "n", lwd = c(2,2,2,2,2,2), lty = c("dashed","dashed","dashed","solid","solid","solid"))
+
+```
