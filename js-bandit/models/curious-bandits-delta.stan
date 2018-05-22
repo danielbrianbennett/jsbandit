@@ -51,6 +51,7 @@ model {
     
     // Generated data
     vector[4]           V;            // Q-values
+    vector[4]           V_choice;     // copy of Q-values to be augmented with value bonus
 
     // Group-level priors
     mu_pr ~ normal(0, 1);
@@ -72,12 +73,13 @@ model {
         }
         
         // update values based on perceptual change
+        V_choice = V;
         if (whichFilled[i] != -1){
-            V[whichFilled[i]] = V[whichFilled[i]] + ( B[participant_ix[i]] * ( block_ix[i] ^ j[participant_ix[i]] ) * ( changeLag[i] ^ k[participant_ix[i]] ) );
+            V_choice[whichFilled[i]] = V_choice[whichFilled[i]] + ( B[participant_ix[i]] * ( block_ix[i] ^ j[participant_ix[i]] ) * ( changeLag[i] ^ k[participant_ix[i]] ) );
         }
  
          // likelihood with softmax
-        choice[i] ~ categorical(softmax(beta[participant_ix[i]] * V));
+        choice[i] ~ categorical(softmax(beta[participant_ix[i]] * V_choice));
         
         // update values based on observed outcome
         V[choice[i]] = V[choice[i]] + eta[participant_ix[i]] * ( outcome[i] - V[choice[i]]);

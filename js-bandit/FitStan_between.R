@@ -1,3 +1,4 @@
+rm(list = ls())
 require(rstan)
 require(here)
 require(tictoc)
@@ -77,6 +78,7 @@ samples <- stan(file = stanFile,
                 iter=1500, 
                 chains=4, 
                 thin=1,
+                control = list("adapt_delta" = 0.95),
                 warmup = 1000  # Default = iter/2
                 # seed = 123  # Setting seed; Default is random seed
 )

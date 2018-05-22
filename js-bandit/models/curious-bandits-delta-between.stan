@@ -50,9 +50,9 @@ transformed parameters {
             j[i] = (mu_pr[4] + sigma[4] * j_pr[i]) * 10;
             k[i] = (mu_pr[5] + sigma[5] * k_pr[i]) * 10;
         } else if (group_ix[i] == 2){
-            B[i] =  (mu_pr[6] + sigma[6] * B_pr[i]) * 100;
-            j[i] = (mu_pr[7] + sigma[7] * j_pr[i]) * 10;
-            k[i] = (mu_pr[8] + sigma[8] * k_pr[i]) * 10;
+            B[i] =  (mu_pr[6] + sigma[6] * B_pr[i]) * 200;
+            j[i] = (mu_pr[7] + sigma[7] * j_pr[i]) * 1;
+            k[i] = (mu_pr[8] + sigma[8] * k_pr[i]) * 1;
         }  else if (group_ix[i] == 3){
             B[i] =  (mu_pr[9] + sigma[9] * B_pr[i]) * 100;
             j[i] = (mu_pr[10] + sigma[10] * j_pr[i]) * 10;
@@ -66,6 +66,7 @@ model {
     
     // Generated data
     vector[4]           V;            // Q-values
+    vector[4]           V_choice;     // copy of Q-values to be augmented with value bonus
 
     // Group-level priors
     mu_pr ~ normal(0, 1);
@@ -87,12 +88,14 @@ model {
         }
         
         // update values based on perceptual change
+        V_choice = V;
         if (whichFilled[i] != -1){
-            V[whichFilled[i]] = V[whichFilled[i]] + ( B[participant_ix[i]] * ( block_ix[i] ^ j[participant_ix[i]] ) * ( changeLag[i] ^ k[participant_ix[i]] ) );
+            V_choice[whichFilled[i]] = V_choice[whichFilled[i]] + ( B[participant_ix[i]] * ( block_ix[i] ^ j[participant_ix[i]] ) * ( changeLag[i] ^ k[participant_ix[i]] ) );
         }
  
+ 
          // likelihood with softmax
-        choice[i] ~ categorical(softmax(beta[participant_ix[i]] * V));
+        choice[i] ~ categorical(softmax(beta[participant_ix[i]] * V_choice));
         
         // update values based on observed outcome
         V[choice[i]] = V[choice[i]] + eta[participant_ix[i]] * ( outcome[i] - V[choice[i]]);
@@ -131,18 +134,18 @@ generated quantities {
     mu_B_g = mu_pr[3] * 100;
     mu_j_g = mu_pr[4] * 10;
     mu_k_g = mu_pr[5] * 10;
-    mu_B_b = mu_pr[6] * 100;
-    mu_j_b = mu_pr[7] * 10;
-    mu_k_b = mu_pr[8] * 10;
+    mu_B_b = mu_pr[6] * 200;
+    mu_j_b = mu_pr[7] * 1;
+    mu_k_b = mu_pr[8] * 1;
     mu_B_q = mu_pr[9] * 100;
     mu_j_q = mu_pr[10] * 10;
     mu_k_q = mu_pr[11] * 10;
     sigma_B_g = sigma[3] * 100;
     sigma_j_g = sigma[4] * 10;
     sigma_k_g = sigma[5] * 10;
-    sigma_B_b = sigma[6] * 100;
-    sigma_j_b = sigma[7] * 10;
-    sigma_k_b = sigma[8] * 10;
+    sigma_B_b = sigma[6] * 200;
+    sigma_j_b = sigma[7] * 1;
+    sigma_k_b = sigma[8] * 1;
     sigma_B_q = sigma[9] * 100;
     sigma_j_q = sigma[10] * 10;
     sigma_k_q = sigma[11] * 10;

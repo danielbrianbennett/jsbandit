@@ -1,3 +1,5 @@
+rm(list = ls())
+
 require(rstan)
 require(here)
 require(tictoc)
@@ -64,7 +66,7 @@ initVals = list(list(mu_pr = rep(0,5),
 rstan_options(auto_write = TRUE)
 options(mc.cores = parallel::detectCores())
 
-stanFile = here("helper","curious-bandits.stan")
+stanFile = here("models","curious-bandits-delta.stan")
 # Call stan 
 tic()
 samples <- stan(file = stanFile,   
@@ -74,7 +76,10 @@ samples <- stan(file = stanFile,
                 iter=1500, 
                 chains=4, 
                 thin=1,
+                control = list("adapt_delta" = 0.85),
                 warmup = 1000  # Default = iter/2
                 # seed = 123  # Setting seed; Default is random seed
 )
 toc()
+
+save(samples, file = here("models","samples", "delta_v2.Rdata"))
