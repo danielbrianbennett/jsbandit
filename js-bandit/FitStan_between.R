@@ -78,7 +78,7 @@ samples <- stan(file = stanFile,
                 iter=1500, 
                 chains=4, 
                 thin=1,
-                control = list("adapt_delta" = 0.95),
+                control = list("adapt_delta" = 0.92, "max_treedepth" = 10),
                 warmup = 1000  # Default = iter/2
                 # seed = 123  # Setting seed; Default is random seed
 )
