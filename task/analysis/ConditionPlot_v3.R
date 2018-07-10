@@ -6,7 +6,7 @@ rm(list = ls())
 
 # set version
 version <- "v3"
-fileDir <- "~/Documents/Git/jsbandit/data/"
+fileDir <- "~/Documents/Git/jsbandit/task/data/"
 
 # load file
 filename <- paste0(fileDir, "banditData_", version, ".RData")
