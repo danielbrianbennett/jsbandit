@@ -12,6 +12,10 @@ fileDir <- "~/Documents/Git/jsbandit/task/data/"
 filename <- paste0(fileDir, "banditData_", version, ".RData")
 load(filename)
 
+# load participant whitelist
+filename <- paste0(fileDir, "filteredIDs_", version, ".RData")
+load(filename)
+
 # aggregate choice proportions by lag number across participants
 choice.by.lag <- aggregate(sorted.data$filledChosen, by = list(sorted.data$changeLag, sorted.data$fillColour), FUN = mean)
 sd.choice.by.lag <- aggregate(sorted.data$filledChosen, by = list(sorted.data$changeLag, sorted.data$fillColour), FUN = sd)
