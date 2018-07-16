@@ -5,7 +5,7 @@ library(ggplot2)
 rm(list = ls())
 
 # set version
-version <- "v2point2" # either v2point2, v3, or v4
+version <- "v3" # either v2point2, v3, or v4
 fileDir <- "~/Documents/Git/jsbandit/task/data/"
 
 # load file
