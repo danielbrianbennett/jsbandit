@@ -99,7 +99,7 @@ glm.fit <- glm(filledChosen ~ block*changeLag + C(fillColour, contr = contr.sum,
 summary(glm.fit)
 
 # restrict ourself to the second trial pre-change and the first trial post-change IN THE FINAL BLOCK
-eligible.data <- subset(sorted.data.v3, (sorted.data.v3$block == 1 & sorted.data.v3$changeLag %in% c(-2,1)))
+eligible.data <- subset(sorted.data.v3, (sorted.data.v3$block == 3 & sorted.data.v3$changeLag %in% c(-2,1)))
 eligible.data$changeLag <- as.factor(eligible.data$changeLag)
 
 # logistic regression
@@ -157,6 +157,56 @@ eligible.data <- subset(all.data, (all.data$changeLag >= 1))
 
 # logistic regression
 glm.fit <- glm(filledChosen ~ block*changeLag*exp,
+               data = eligible.data,
+               family = binomial(link = "logit"))
+
+summary(glm.fit)
+
+###### Pre-screen for experiment 4 #######
+
+
+# set version
+version <- "v4" # either v2point2, v3, or v4
+fileDir <- "~/Documents/Git/jsbandit/task/data/"
+
+# load file
+filename <- paste0(fileDir, "banditData_", version, ".RData")
+load(filename)
+sorted.data.v4 <- sorted.data
+
+# load list of filtered IDs
+filename <- paste0(fileDir, "filteredIDs_", version, ".RData")
+load(filename)
+
+##### DO ANALYSIS #####
+# retain only participants with an ID in the white-list
+sorted.data.v4 <- sorted.data.v4[sorted.data.v4$ID %in% filtered.IDs,]
+
+# calculate average points per trial
+meanPointsWon_v4 <- as.vector(by(sorted.data.v4$pointsWon, INDICES = sorted.data.v4$ID, FUN = mean))
+asymptote_v4 <- as.vector(by(sorted.data.v4[sorted.data.v4$trial >= 25,]$pointsWon, INDICES = sorted.data.v4[sorted.data.v4$trial >= 25,]$ID, FUN = mean))
+
+eligible.data <- subset(sorted.data.v4, (sorted.data.v4$changeLag %in% c(-2,1)))
+eligible.data$changeLag <- as.factor(eligible.data$changeLag)
+eligible.data$tagText <- as.factor(eligible.data$tagText)
+
+# logistic regression
+glm.fit <- glm(filledChosen ~ block*changeLag + changeLag*relevel(tagText, ref = "good"),
+               data = eligible.data,
+               family = binomial(link = "logit"))
+
+summary(glm.fit)
+
+glm.fit <- glm(filledChosen ~ block*changeLag + changeLag*relevel(tagText, ref = "bad"),
+               data = eligible.data,
+               family = binomial(link = "logit"))
+
+summary(glm.fit)
+
+
+# logistic regression
+eligible.data <- subset(sorted.data.v4, (sorted.data.v4$changeLag >= 1))
+glm.fit <- glm(filledChosen ~ block*changeLag + changeLag*relevel(tagText, ref = "good"),
                data = eligible.data,
                family = binomial(link = "logit"))
 
