@@ -99,7 +99,7 @@ glm.fit <- glm(filledChosen ~ block*changeLag + C(fillColour, contr = contr.sum,
 summary(glm.fit)
 
 # restrict ourself to the second trial pre-change and the first trial post-change IN THE FINAL BLOCK
-eligible.data <- subset(sorted.data.v3, (sorted.data.v3$block == 1 & sorted.data.v3$changeLag %in% c(-2,1)))
+eligible.data <- subset(sorted.data.v3, (sorted.data.v3$block == 3 & sorted.data.v3$changeLag %in% c(-2,1)))
 eligible.data$changeLag <- as.factor(eligible.data$changeLag)
 
 # logistic regression
@@ -162,8 +162,7 @@ glm.fit <- glm(filledChosen ~ block*changeLag*exp,
 
 summary(glm.fit)
 
-###### Pre-screen for experiment 3 #######
-
+###### Pre-screen for experiment 4 #######
 
 # set version
 version <- "v4" # either v2point2, v3, or v4
