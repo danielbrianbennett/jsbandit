@@ -85,8 +85,9 @@ for (i in 1:3){
     # plot bonus size over time
     bonusSize <- mapply(FUN = function(B,j,k,blockIndex,trialIndex){return(B * (blockIndex ^ j) * (trialIndex ^ k))}, rep(B, times = 3 * nTimePoints), rep(j, times = 3 * nTimePoints), rep(k,times = 3 * nTimePoints), blockIndices, trialIndices)
     bonusSize <- matrix(data = bonusSize, nrow = 3, ncol = nTimePoints, byrow = TRUE)
-    plot(1:nTimePoints, bonusSize[1,],  type = "b", lwd = 2, xlab = "Post-change lag", ylab = "Bonus size", main = title, col = col[1], ylim=c(0,50))
+    plot(1:nTimePoints, bonusSize[1,],  type = "b", lwd = 2, xlab = "Post-change lag", ylab = "Bonus size", main = title, col = col[1], ylim=c(-30,60))
     lines(1:nTimePoints, bonusSize[2,], type = "b", lwd = 2, col = col[2])
     lines(1:nTimePoints, bonusSize[3,], type = "b", lwd = 2, col = col[3])
+    abline(h = 0, col="black", lty=3, lwd=2)
     legend(x = "topright", col = col, lwd = c(2,2,2), legend = c("Block 1","Block 2", "Block 3"), bty = "n")
 }
