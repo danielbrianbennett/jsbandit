@@ -161,3 +161,77 @@ glm.fit <- glm(filledChosen ~ block*changeLag*exp,
                family = binomial(link = "logit"))
 
 summary(glm.fit)
+
+###### Pre-screen for experiment 3 #######
+
+
+# set version
+version <- "v4" # either v2point2, v3, or v4
+fileDir <- "~/Documents/Git/jsbandit/task/data/"
+
+# load file
+filename <- paste0(fileDir, "banditData_", version, ".RData")
+load(filename)
+sorted.data.v4 <- sorted.data
+
+# load list of filtered IDs
+filename <- paste0(fileDir, "filteredIDs_", version, ".RData")
+load(filename)
+
+##### DO ANALYSIS #####
+
+# retain only participants with an ID in the white-list
+sorted.data.v4 <- sorted.data.v4[sorted.data.v4$ID %in% filtered.IDs,]
+sorted.data.v4$tagText <- as.factor(sorted.data.v4$tagText)
+
+# calculate average points per trial
+meanPointsWon_v4 <- as.vector(by(sorted.data.v4$pointsWon, INDICES = sorted.data.v4$ID, FUN = mean))
+asymptote_v4 <- as.vector(by(sorted.data.v4[sorted.data.v4$trial >= 25,]$pointsWon, INDICES = sorted.data.v4[sorted.data.v4$trial >= 25,]$ID, FUN = mean))
+
+# restrict ourself to the second trial pre-change and the first trial post-change relative to 'bad'
+eligible.data <- subset(sorted.data.v4, (sorted.data.v4$changeLag %in% c(-2,1)))
+eligible.data$changeLag <- as.factor(eligible.data$changeLag)
+eligible.data <- within(eligible.data, tagText <- relevel(tagText, ref = 2))
+
+# logistic regression
+glm.fit <- glm(filledChosen ~ block + changeLag*tagText,
+               data = eligible.data,
+               family = binomial(link = "logit"))
+
+summary(glm.fit)
+
+# restrict ourself to the second trial pre-change and the first trial post-change relative to '????'
+eligible.data <- subset(sorted.data.v4, (sorted.data.v4$changeLag %in% c(-2,1)))
+eligible.data$changeLag <- as.factor(eligible.data$changeLag)
+eligible.data <- within(eligible.data, tagText <- relevel(tagText, ref = 1))
+
+# logistic regression
+glm.fit <- glm(filledChosen ~ block + changeLag*tagText,
+               data = eligible.data,
+               family = binomial(link = "logit"))
+
+summary(glm.fit)
+
+# restrict ourself to the second trial pre-change and the first trial post-change IN THE FINAL BLOCK relative to bad
+eligible.data <- subset(sorted.data.v4, (sorted.data.v4$block == 3 & sorted.data.v4$changeLag %in% c(-2,1)))
+eligible.data$changeLag <- as.factor(eligible.data$changeLag)
+eligible.data <- within(eligible.data, tagText <- relevel(tagText, ref = 2)) 
+
+# logistic regression
+glm.fit <- glm(filledChosen ~changeLag + tagText,
+               data = eligible.data,
+               family = binomial(link = "logit"))
+
+summary(glm.fit)
+
+
+# look at the rate of decay of the effect after it has started
+eligible.data <- subset(sorted.data.v4, (sorted.data.v4$changeLag >= 1))
+eligible.data <- within(eligible.data, tagText <- relevel(tagText, ref = 2)) 
+
+# logistic regression
+glm.fit <- glm(filledChosen ~ block*changeLag + tagText,
+               data = eligible.data,
+               family = binomial(link = "logit"))
+
+summary(glm.fit)
