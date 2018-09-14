@@ -1,6 +1,9 @@
 library(here)
 library(rstan)
 
+# set margins for all plots
+par(mar=c(6,6,6,0.5))
+
 ##### EXPERIMENT 1 #####
 
 # load samples for experiment 1
@@ -20,11 +23,11 @@ trialIndices <- rep(1:nTimePoints, times = 3)
 # plot bonus size over time
 bonusSize <- mapply(FUN = function(B,j,k,blockIndex,trialIndex){return(B * (blockIndex ^ j) * (trialIndex ^ k))}, rep(postMean$mu_B, times = 3 * nTimePoints), rep(postMean$mu_j, times = 3 * nTimePoints), rep(postMean$mu_k,times = 3 * nTimePoints), blockIndices, trialIndices)
 bonusSize <- matrix(data = bonusSize, nrow = 3, ncol = nTimePoints, byrow = TRUE)
-plot(1:nTimePoints, bonusSize[1,],  type = "b", lwd = 2, xlab = "Post-change lag", ylab = "Bonus size", main = "Bonus size over time", ylim=c(-2,25), cex.axis=1.5)
+plot(1:nTimePoints, bonusSize[1,],  type = "b", lwd = 2, xlab = "Post-change lag", ylab = "Bonus size", main = "Bonus size over time", ylim=c(-2,25), cex.axis=1.5, cex.lab=2)
 lines(1:nTimePoints, bonusSize[2,], type = "b", lwd = 2, col = "#979797")
 lines(1:nTimePoints, bonusSize[3,], type = "b", lwd = 2, col = "#D3D3D3")
 abline(h = 0, col="black", lty=3, lwd=2)
-legend(x = "topright", col = c("black","#979797","#D3D3D3"), lwd = c(2,2,2), legend = c("Block 1","Block 2", "Block 3"), bty = "n")
+legend(x = "topright", col = c("black","#979797","#D3D3D3"), lwd = c(2,2,2), legend = c("Block 1","Block 2", "Block 3"), bty = "n", cex=1.5)
 
 ##### EXPERIMENT 2 #####
 
@@ -45,11 +48,11 @@ trialIndices <- rep(1:nTimePoints, times = 3)
 # plot bonus size over time
 bonusSize <- mapply(FUN = function(B,j,k,blockIndex,trialIndex){return(B * (blockIndex ^ j) * (trialIndex ^ k))}, rep(postMean$mu_B, times = 3 * nTimePoints), rep(postMean$mu_j, times = 3 * nTimePoints), rep(postMean$mu_k,times = 3 * nTimePoints), blockIndices, trialIndices)
 bonusSize <- matrix(data = bonusSize, nrow = 3, ncol = nTimePoints, byrow = TRUE)
-plot(1:nTimePoints, bonusSize[1,],  type = "b", lwd = 2, xlab = "Post-change lag", ylab = "Bonus size", main = "Bonus size over time", col = "#6f5884", ylim=c(-2,25), cex.axis=1.5)
+plot(1:nTimePoints, bonusSize[1,],  type = "b", lwd = 2, xlab = "Post-change lag", ylab = "Bonus size", main = "Bonus size over time", col = "#6f5884", ylim=c(-2,25), cex.axis=1.5, cex.lab=2)
 lines(1:nTimePoints, bonusSize[2,], type = "b", lwd = 2, col = "#9f7ebd")
 lines(1:nTimePoints, bonusSize[3,], type = "b", lwd = 2, col = "#cfbede")
 abline(h = 0, col="black", lty=3, lwd=2)
-legend(x = "topright", col = c("black","#979797","#D3D3D3"), lwd = c(2,2,2), legend = c("Block 1","Block 2", "Block 3"), bty = "n")
+legend(x = "topright", col = c("#6f5884","#9f7ebd","#cfbede"), lwd = c(2,2,2), legend = c("Block 1","Block 2", "Block 3"), bty = "n", cex=1.5)
 
 ##### EXPERIMENT 3 #####
 
@@ -87,9 +90,9 @@ for (i in 1:3){
     # plot bonus size over time
     bonusSize <- mapply(FUN = function(B,j,k,blockIndex,trialIndex){return(B * (blockIndex ^ j) * (trialIndex ^ k))}, rep(B, times = 3 * nTimePoints), rep(j, times = 3 * nTimePoints), rep(k,times = 3 * nTimePoints), blockIndices, trialIndices)
     bonusSize <- matrix(data = bonusSize, nrow = 3, ncol = nTimePoints, byrow = TRUE)
-    plot(1:nTimePoints, bonusSize[1,],  type = "b", lwd = 2, xlab = "Post-change lag", ylab = "Bonus size", main = title, col = col[1], ylim=c(-30,60), cex.axis=1.5)
+    plot(1:nTimePoints, bonusSize[1,],  type = "b", lwd = 2, xlab = "Post-change lag", ylab = "Bonus size", main = title, col = col[1], ylim=c(-30,60), cex.axis=1.5, cex.lab=2)
     lines(1:nTimePoints, bonusSize[2,], type = "b", lwd = 2, col = col[2])
     lines(1:nTimePoints, bonusSize[3,], type = "b", lwd = 2, col = col[3])
     abline(h = 0, col="black", lty=3, lwd=2)
-    legend(x = "topright", col = col, lwd = c(2,2,2), legend = c("Block 1","Block 2", "Block 3"), bty = "n")
+    legend(x = "topright", col = col, lwd = c(2,2,2), legend = c("Block 1","Block 2", "Block 3"), bty = "n", cex=1.5)
 }
